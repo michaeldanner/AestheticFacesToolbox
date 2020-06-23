@@ -8,7 +8,7 @@ Tested with Python 3.6, matplotlib==3.2.2, numpy==1.19.0, Pillow==7.1.2, PyQt5==
 ![Aesthetic Faces Toolbox](img/aestheticToolbox.png)
 
 ## Citation
-[Who Loves Virtue as much as He Loves Beauty?: Deep Learning based Estimator for Aesthetics of Portraits(https://www.scitepress.org/Link.aspx?doi=10.5220/0009172905210528)]
+[Who Loves Virtue as much as He Loves Beauty?: Deep Learning based Estimator for Aesthetics of Portraits](https://www.scitepress.org/Link.aspx?doi=10.5220/0009172905210528)
 ```
 @conference{visapp20,
 author={Tobias Gerlach. and Michael Danner. and Le Ping Peng. and Aidas Kaminickas. and Wu Fei. and Matthias Rätsch.},
