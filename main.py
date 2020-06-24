@@ -1,4 +1,4 @@
-import sys
+import sys, os
 
 from datamatrix import DataMatrix
 from PyQt5.QtCore import QCoreApplication, QDate, QDateTime, QMetaObject, QObject, QPoint, QRect, QSize, QTime, QUrl, Qt
@@ -246,94 +246,109 @@ class fr_MainWindow(QMainWindow, Ui_MainWindow):
         retval = msg.exec_()
         print("value of pressed message box button:", retval)
 
+    def start_evaluation(self, tol):
+        dm = DataMatrix(self.lbl_img_list.text(), self.lbl_anno_dir.text(), self.lbl_img_dir.text(),
+                        self.lbl_out_dir.text(), self.lbl_ages_list.text(), tol)
+        self.plainTextEdit.setPlainText(dm.get_dataset_properties())
+        self.output_log.setPlainText(dm.output_log)
+
+        # plot histogram 1
+        self.hist1_widget.canvas.figure.clear()
+        ax = self.hist1_widget.canvas.figure.subplots()
+        ax.clear()
+        ax.hist(dm.hist1_canvas, bins=8)
+        self.hist1_widget.canvas.draw()
+
+        # plot histogram 2
+        self.hist2_widget.canvas.figure.clear()
+        ax = self.hist2_widget.canvas.figure.subplots()
+        ax.clear()
+        ax.hist(dm.hist2_canvas, bins=30)
+        self.hist2_widget.canvas.draw()
+
+        # plot miss attractive
+        self.attr_widget.canvas.figure.clear()
+        ax = self.attr_widget.canvas.figure.subplots()
+        ax.clear()
+        ax.axis('off')
+        ax.set_title('Miss Aesthetics')
+        ax.imshow(dm.attr_canvas)
+        self.attr_widget.canvas.draw()
+
+        # plot correlation of age and aesthetics
+        min, max, attr, avg, var = dm.get_age_data()
+        x = list(range(min, max))
+        self.ac_widget2.canvas.figure.clear()
+        ax = self.ac_widget2.canvas.figure.subplots()
+        ax.clear()
+        ax.set_title('Correlation of Aesthetics and Age')
+        for i in range(0, max - min):
+            for score in attr[i]:
+                ax.plot(min + i, score, '.')
+                # print(str(min+i) + ' ' + str(score))
+        ax.plot(x, avg, '-', color='b')
+
+        self.ac_widget2.canvas.draw()
+
     def buttonClicked(self):
         sender = self.sender()
 
         if sender.text() == 'Image Textfile':
             # self.rot += 0.1
-            print("< you pressed " + sender.text())
             fname = QFileDialog.getOpenFileName(self, 'Open file',
                                                 'c:\\', "Aesthetics data file (*.dat *.txt)")
-            print(fname)
             self.lbl_img_list.setText(fname[0])
 
         elif sender.text() == 'Image directory':
             print("> you pressed " + sender.text())
             fname = QFileDialog.getExistingDirectory(self, 'Select Directory')
-            print(fname)
             self.lbl_img_dir.setText(fname)
 
         elif sender.text() == 'Annotations directory':
-            print("> you pressed " + sender.text())
             fname = QFileDialog.getExistingDirectory(self, 'Select Directory')
-            print(fname)
             self.lbl_anno_dir.setText(fname)
 
         elif sender.text() == 'Output directory':
-            print("> you pressed " + sender.text())
             fname = QFileDialog.getExistingDirectory(self, 'Select Directory')
-            print(fname)
             self.lbl_out_dir.setText(fname)
 
         elif sender.text() == 'Ages Textfile':
-            print("> you pressed " + sender.text())
             fname = QFileDialog.getOpenFileName(self, 'Open file',
                                                 filter="Aesthetics data file (*.dat *.txt)")
-            print(fname)
             self.lbl_ages_list.setText(fname[0])
 
         elif sender.text() == 'Start Evaluation':
             tol = 0
+            details = ''
+            error = False
             try:
                 tol = int(self.lineEdit.text())
             except:
                 tol = None
-            if not isinstance(tol, int):
-                self.showdialog("Evaluation Error", "No tolerance value set", "Tolerance value is not a valid integer",
-                                "Please insert a valid integer")
+            if not isinstance(tol, int) or tol > 99:
+                error = True
+                details += "Insert a valid integer to Tolerance input field\n"
+            if not os.path.isfile(self.lbl_ages_list.text()):
+                error = True
+                details += "Select a valid Ages Textfile\n"
+            if not os.path.isfile(self.lbl_img_list.text()):
+                error = True
+                details += "Select a valid Image Textfile\n"
+            if not os.path.isdir(self.lbl_anno_dir.text()):
+                error = True
+                details += "Select a valid Annotation Directory\n"
+            if not os.path.isdir(self.lbl_img_dir.text()):
+                error = True
+                details += "Select a valid Image Directory\n"
+            if not os.path.isdir(self.lbl_out_dir.text()):
+                error = True
+                details += "Select a valid Output Directory\n"
+
+            if error:
+                self.showdialog("Evaluation Error", "Invalid value detected.", "Evaluation could not be started.",
+                                details)
             else:
-                dm = DataMatrix(self.lbl_img_list.text(), self.lbl_anno_dir.text(), self.lbl_img_dir.text(),
-                                self.lbl_out_dir.text(), self.lbl_ages_list.text(), tol)
-                self.plainTextEdit.setPlainText(dm.get_dataset_properties())
-                self.output_log.setPlainText(dm.output_log)
-
-                # plot histogram 1
-                self.hist1_widget.canvas.figure.clear()
-                ax = self.hist1_widget.canvas.figure.subplots()
-                ax.clear()
-                ax.hist(dm.hist1_canvas, bins=8)
-                self.hist1_widget.canvas.draw()
-
-                # plot histogram 2
-                self.hist2_widget.canvas.figure.clear()
-                ax = self.hist2_widget.canvas.figure.subplots()
-                ax.clear()
-                ax.hist(dm.hist2_canvas, bins=30)
-                self.hist2_widget.canvas.draw()
-
-                # plot miss attractive
-                self.attr_widget.canvas.figure.clear()
-                ax = self.attr_widget.canvas.figure.subplots()
-                ax.clear()
-                ax.axis('off')
-                ax.set_title('Miss Aesthetics')
-                ax.imshow(dm.attr_canvas)
-                self.attr_widget.canvas.draw()
-
-                # plot correlation of age and aesthetics
-                min, max, attr, avg, var = dm.get_age_data()
-                x = list(range(min, max))
-                self.ac_widget2.canvas.figure.clear()
-                ax = self.ac_widget2.canvas.figure.subplots()
-                ax.clear()
-                ax.set_title('Correlation of Aesthetics and Age')
-                for i in range(0, max-min):
-                    for score in attr[i]:
-                        ax.plot(min+i, score, '.')
-                        # print(str(min+i) + ' ' + str(score))
-                ax.plot(x, avg, '-', color='b')
-
-                self.ac_widget2.canvas.draw()
+                self.start_evaluation(tol)
 
 
 if __name__ == "__main__":
