@@ -361,13 +361,11 @@ if __name__ == "__main__":
     # MainWindow.show()
     # ex = App()
     sys.exit(app.exec_())
-
-
-if __name__ == 'c__main__':
-    path = 'c:\\tmp\\aesthetics\\'
-    f = str(path) + 'out2020'
-    load = str(path) + 'annotations2020.dat'
-    image = str(path) + 'Pictures2020'
-    out = str(path) + 'Output'
-    age = str(path) + 'alter.txt'
+else:
+    path = 'c:/tmp/aesthetics/'
+    f = path + 'out2020'
+    load = path + 'annotations2020.dat'
+    image = path + 'Pictures2020'
+    out = path + 'Output'
+    age = path + 'alter.txt'
     dm = DataMatrix(load, f, image, out, age, -5)

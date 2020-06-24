@@ -4,6 +4,7 @@ import os, sys
 import re
 import numpy as np
 import matplotlib.pyplot as plt
+from PIL import Image
 from matplotlib.backends.backend_qt5agg import FigureCanvasQT
 
 
@@ -195,12 +196,31 @@ class DataMatrix:
         sum_per_col_valid = np.sum(B, axis=0)
         sc = 1.0 * sum_per_col_valid / valid_per_col
         self.score_list = sc
-        miss_attr = self.image_path + os.sep + self.image_names_list[np.argmax(sc)].split(' ')[0]
+        print(np.argmax(sc))
+        sc_sort = np.argsort(sc)
+        miss_attr = self.image_path + os.sep + self.image_names_list[sc_sort[-1]].split(' ')[0]
         print(miss_attr)
-
         self.hist1_canvas = valid_per_col
         self.hist2_canvas = sc
-        self.attr_canvas = plt.imread(miss_attr)
+
+        miss2_attr = self.image_path + os.sep + self.image_names_list[sc_sort[-2]].split(' ')[0]
+        print(miss2_attr)
+        miss3_attr = self.image_path + os.sep + self.image_names_list[sc_sort[-3]].split(' ')[0]
+        print(miss3_attr)
+        img0 = Image.open(miss_attr)
+        img1 = Image.open(miss2_attr)
+        img2 = Image.open(miss3_attr)
+        img = self.get_concat_h(img0, img1)
+        img = self.get_concat_h(img, img2)
+        img.save('tmp.png')
+
+        self.attr_canvas = plt.imread('tmp.png')
+
+    def get_concat_h(self, im1, im2):
+        dst = Image.new('RGB', (im1.width + im2.width, im1.height))
+        dst.paste(im1, (0, 0))
+        dst.paste(im2, (im1.width, 0))
+        return dst
 
     def normal_rank_graph(self):
         avg_attr_per_age = []
