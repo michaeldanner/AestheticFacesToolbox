@@ -13,6 +13,7 @@ class DataMatrix:
     tol_diff_num_values = 0
     count_annos = 0
     count_skipped = 0
+    count_error = 0
     A_data = []
     anno_list = []
     image_list = []
@@ -26,7 +27,7 @@ class DataMatrix:
     image_path = ''
     output_dir = ''
     anno_dat = ''
-    age_dat = 'c:\\tmp\\Attractiveness\\Output\\ages.txt'
+    age_dat = 'c:\\tmp\\aesthetics\\alter.txt'
     anno_files = ''
     output_log = ''
     hist1_canvas = None
@@ -112,23 +113,29 @@ class DataMatrix:
 
     def generate_datamatrix(self):
         output_log = ''
-        count = [0, 0]  # number of annotations, number of skipped
+        count = [0, 0, 0]  # number of annotations, number of skipped, number of errors
         for subpath in glob.glob(str(self.anno_files + "\\*")):
+            # subpath is annotations folder, which is students matricle number
             rand, value = self.load_annotations(subpath)
             if len(rand) > 1 and len(value) > 1:
                 valneu = np.full((self.num_probs), 2)
+                _, f = os.path.split(subpath)
                 for val in value:
                     if val[0] < 1 or val[0] > self.num_pairs:
                         print("warning: unvalid index 0 < val(%d,1)=%d < num_pairs(%d) => ignore value")
                     if val[1] < 0 or val[1] > 1:
                         print("warning: value(%d)~= 0 or 1 => set to value and pair to -1 and go on")
-                    valneu[rand[val[0]-1]] = val[1]
-                    valneu[rand[val[0]+self.num_pairs-1]] = not val[1]
+                    try:
+                        valneu[rand[val[0]-1]] = val[1]
+                        valneu[rand[val[0]+self.num_pairs-1]] = not val[1]
+                    except IndexError as err:
+                        print(str(err) + ' in folder ' + str(f))
+                        output_log += str(err) + ' in folder ' + str(f) + '\n'
+                        count[2] += 1
                 # print(valneu)
-                done = 100 - (np.sum(valneu) - 789) / 3.0 / self.num_pairs * 100
-                _, f = os.path.split(subpath)
+                done = 100 - (np.sum(valneu) - self.num_pairs) / 3.0 / self.num_pairs * 100
                 count[0] += 1
-                output_log += str(count[0]) + '\t' + (str(f) + f" \t - Annotations: {done:3.1f}%")
+                output_log += str(count[0]) + '  ' + (str(f) + f" \t - Annotations: {done:3.1f}%")
 
                 if done >= self.tolerance:
                     self.A_data.append(valneu)
@@ -137,8 +144,9 @@ class DataMatrix:
                     count[1] += 1
                     output_log += " - skipped"
                 output_log += '\n'
-        self.count_annos = count[0] - count[1]
+        self.count_annos = count[0] - count[1] - count[2]
         self.count_skipped = count[1]
+        self.count_error = count[2]
         output_log += f'{count[0]:d} Annotations scanned, {count[1]:d} skipped, {count[0] - count[1]:d} Annotations in Datamatrix\n'
         self.output_log = output_log
 
@@ -173,6 +181,7 @@ class DataMatrix:
         sc = 1.0 * sum_per_col_valid / valid_per_col
         self.score_list = sc
         miss_attr = self.image_path + os.sep + self.image_names_list[np.argmax(sc)].split(' ')[0]
+        print(miss_attr)
 
         self.hist1_canvas = valid_per_col
         self.hist2_canvas = sc
@@ -216,8 +225,9 @@ class DataMatrix:
         ret_str += '\n\nAnnotations\ntotal:\t' + str(self.count_annos + self.count_skipped)
         ret_str += '\nvalid:\t' + str(self.count_annos)
         ret_str += '\nskipped:\t' + str(self.count_skipped)
-        ret_str += '\n\nTop 25 Annotators:'
-        for matr in self.matr_list[:25]:
+        ret_str += '\nerror:\t' + str(self.count_error)
+        ret_str += '\n\nTop Annotators:'
+        for matr in self.matr_list[:40]:
             ret_str += '\n' + str(matr[0]) + ':\t' + str(matr[1])
         return ret_str
 

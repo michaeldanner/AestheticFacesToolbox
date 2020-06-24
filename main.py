@@ -182,7 +182,7 @@ class fr_MainWindow(QMainWindow, Ui_MainWindow):
         super(fr_MainWindow, self).__init__(parent)
         qApp.installEventFilter(self)
         self.setupUi(self)
-        path = 'c:\\tmp\\Attractiveness\\'
+        path = 'c:\\tmp\\aesthetics\\'
 
         self.btn_img_dir.clicked.connect(self.buttonClicked)
         self.btn_img_list.clicked.connect(self.buttonClicked)
@@ -191,9 +191,9 @@ class fr_MainWindow(QMainWindow, Ui_MainWindow):
         self.btn_start.clicked.connect(self.buttonClicked)
 
         self.lbl_out_dir.setText(str(path) + 'Output')
-        self.lbl_img_dir.setText(str(path) + 'olympicstomato')
-        self.lbl_anno_dir.setText(str(path) + 'attractivenesssurveysolympics')
-        self.lbl_img_list.setText(str(path) + 'Output\\images.txt')
+        self.lbl_img_dir.setText(str(path) + 'Pictures2020')
+        self.lbl_anno_dir.setText(str(path) + 'out2020')
+        self.lbl_img_list.setText(str(path) + 'annotations2020.dat')
         self.show()
 
     def buttonClicked(self):
@@ -227,21 +227,24 @@ class fr_MainWindow(QMainWindow, Ui_MainWindow):
 
         elif sender.text() == 'Start Evaluation':
             dm = DataMatrix(self.lbl_img_list.text(), self.lbl_anno_dir.text(), self.lbl_img_dir.text(),
-                            self.lbl_out_dir.text(), 50)
+                            self.lbl_out_dir.text(), 20)
             self.plainTextEdit.setPlainText(dm.get_dataset_properties())
             self.output_log.setPlainText(dm.output_log)
+
             # plot histogram 1
             self.hist1_widget.canvas.figure.clear()
             ax = self.hist1_widget.canvas.figure.subplots()
             ax.clear()
-            ax.hist(dm.hist1_canvas)
+            ax.hist(dm.hist1_canvas, bins=8)
             self.hist1_widget.canvas.draw()
+
             # plot histogram 2
             self.hist2_widget.canvas.figure.clear()
             ax = self.hist2_widget.canvas.figure.subplots()
             ax.clear()
-            ax.hist(dm.hist2_canvas)
+            ax.hist(dm.hist2_canvas, bins=30)
             self.hist2_widget.canvas.draw()
+
             # plot miss attractive
             self.attr_widget.canvas.figure.clear()
             ax = self.attr_widget.canvas.figure.subplots()
@@ -251,7 +254,7 @@ class fr_MainWindow(QMainWindow, Ui_MainWindow):
             ax.imshow(dm.attr_canvas)
             self.attr_widget.canvas.draw()
 
-            # plot miss attractive
+            # plot correlation of age and aesthetics
             min, max, attr, avg, var = dm.get_age_data()
             x = list(range(min, max))
             self.ac_widget2.canvas.figure.clear()
@@ -261,7 +264,7 @@ class fr_MainWindow(QMainWindow, Ui_MainWindow):
             for i in range(0, max-min):
                 for score in attr[i]:
                     ax.plot(min+i, score, '.')
-                    print(str(min+i) + ' ' + str(score))
+                    # print(str(min+i) + ' ' + str(score))
             ax.plot(x, avg, '-', color='b')
 
             self.ac_widget2.canvas.draw()
@@ -279,10 +282,10 @@ if __name__ == "__main__":
     sys.exit(app.exec_())
 
 
-if __name__ == 'x__main__':
-    path = 'c:\\tmp\\Attractiveness\\'
-    f = str(path) + 'attractivenesssurveysolympics'
-    load = str(path) + 'Output\\images.txt'
-    image = str(path) + 'olympicstomato'
+if __name__ == 'c__main__':
+    path = 'c:\\tmp\\aesthetics\\'
+    f = str(path) + 'out2020'
+    load = str(path) + 'annotations2020.dat'
+    image = str(path) + 'Pictures2020'
     out = str(path) + 'Output'
     dm = DataMatrix(load, f, image, out, 50)
