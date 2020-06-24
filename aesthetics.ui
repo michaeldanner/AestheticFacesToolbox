@@ -21,8 +21,14 @@
        <widget class="QPlainTextEdit" name="output_log">
         <property name="minimumSize">
          <size>
-          <width>450</width>
+          <width>400</width>
           <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>400</width>
+          <height>16777215</height>
          </size>
         </property>
        </widget>
@@ -77,7 +83,7 @@
         </property>
         <property name="maximumSize">
          <size>
-          <width>460</width>
+          <width>120</width>
           <height>16777215</height>
          </size>
         </property>
@@ -128,6 +134,13 @@
       <property name="sizeConstraint">
        <enum>QLayout::SetFixedSize</enum>
       </property>
+      <item row="1" column="3">
+       <widget class="QLabel" name="lbl_out_dir">
+        <property name="text">
+         <string>not available</string>
+        </property>
+       </widget>
+      </item>
       <item row="1" column="2">
        <widget class="QLabel" name="lbl_anno_dir">
         <property name="text">
@@ -142,31 +155,10 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="2">
-       <widget class="QPushButton" name="btn_anno_dir">
-        <property name="text">
-         <string>Annotations directory</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="3">
-       <widget class="QLabel" name="lbl_out_dir">
-        <property name="text">
-         <string>not available</string>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="0">
        <widget class="QPushButton" name="btn_img_list">
         <property name="text">
          <string>Image Textfile</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QPushButton" name="btn_img_dir">
-        <property name="text">
-         <string>Image directory</string>
         </property>
        </widget>
       </item>
@@ -184,12 +176,67 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="4">
+      <item row="0" column="2">
+       <widget class="QPushButton" name="btn_anno_dir">
+        <property name="text">
+         <string>Annotations directory</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="5">
        <widget class="QPushButton" name="btn_start">
         <property name="text">
          <string>Start Evaluation</string>
         </property>
        </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="btn_img_dir">
+        <property name="text">
+         <string>Image directory</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="4">
+       <widget class="QPushButton" name="btn_ages_list">
+        <property name="text">
+         <string>Ages Textfile</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="4">
+       <widget class="QLabel" name="lbl_ages_list">
+        <property name="text">
+         <string>not available</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="5">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QLabel" name="label_tolerance">
+          <property name="text">
+           <string>Tolerance %</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="lineEdit">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>50</width>
+            <height>16777215</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </item>

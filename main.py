@@ -24,7 +24,8 @@ class Ui_MainWindow(object):
         self.log_grid.setObjectName(u"log_grid")
         self.output_log = QPlainTextEdit(self.centralwidget)
         self.output_log.setObjectName(u"output_log")
-        self.output_log.setMinimumSize(QSize(450, 0))
+        self.output_log.setMinimumSize(QSize(400, 0))
+        self.output_log.setMaximumSize(QSize(400, 16777215))
 
         self.log_grid.addWidget(self.output_log, 0, 1, 1, 1)
 
@@ -56,7 +57,7 @@ class Ui_MainWindow(object):
         self.plainTextEdit = QPlainTextEdit(self.centralwidget)
         self.plainTextEdit.setObjectName(u"plainTextEdit")
         self.plainTextEdit.setMinimumSize(QSize(120, 0))
-        self.plainTextEdit.setMaximumSize(QSize(460, 16777215))
+        self.plainTextEdit.setMaximumSize(QSize(120, 16777215))
         self.plainTextEdit.setFrameShape(QFrame.StyledPanel)
         self.plainTextEdit.setFrameShadow(QFrame.Sunken)
         self.plainTextEdit.setMidLineWidth(1)
@@ -85,6 +86,11 @@ class Ui_MainWindow(object):
         self.load_grid = QGridLayout()
         self.load_grid.setObjectName(u"load_grid")
         self.load_grid.setSizeConstraint(QLayout.SetFixedSize)
+        self.lbl_out_dir = QLabel(self.centralwidget)
+        self.lbl_out_dir.setObjectName(u"lbl_out_dir")
+
+        self.load_grid.addWidget(self.lbl_out_dir, 1, 3, 1, 1)
+
         self.lbl_anno_dir = QLabel(self.centralwidget)
         self.lbl_anno_dir.setObjectName(u"lbl_anno_dir")
 
@@ -95,25 +101,10 @@ class Ui_MainWindow(object):
 
         self.load_grid.addWidget(self.btn_out_dir, 0, 3, 1, 1)
 
-        self.btn_anno_dir = QPushButton(self.centralwidget)
-        self.btn_anno_dir.setObjectName(u"btn_anno_dir")
-
-        self.load_grid.addWidget(self.btn_anno_dir, 0, 2, 1, 1)
-
-        self.lbl_out_dir = QLabel(self.centralwidget)
-        self.lbl_out_dir.setObjectName(u"lbl_out_dir")
-
-        self.load_grid.addWidget(self.lbl_out_dir, 1, 3, 1, 1)
-
         self.btn_img_list = QPushButton(self.centralwidget)
         self.btn_img_list.setObjectName(u"btn_img_list")
 
         self.load_grid.addWidget(self.btn_img_list, 0, 0, 1, 1)
-
-        self.btn_img_dir = QPushButton(self.centralwidget)
-        self.btn_img_dir.setObjectName(u"btn_img_dir")
-
-        self.load_grid.addWidget(self.btn_img_dir, 0, 1, 1, 1)
 
         self.lbl_img_list = QLabel(self.centralwidget)
         self.lbl_img_list.setObjectName(u"lbl_img_list")
@@ -125,10 +116,51 @@ class Ui_MainWindow(object):
 
         self.load_grid.addWidget(self.lbl_img_dir, 1, 1, 1, 1)
 
+        self.btn_anno_dir = QPushButton(self.centralwidget)
+        self.btn_anno_dir.setObjectName(u"btn_anno_dir")
+
+        self.load_grid.addWidget(self.btn_anno_dir, 0, 2, 1, 1)
+
         self.btn_start = QPushButton(self.centralwidget)
         self.btn_start.setObjectName(u"btn_start")
 
-        self.load_grid.addWidget(self.btn_start, 0, 4, 1, 1)
+        self.load_grid.addWidget(self.btn_start, 0, 5, 1, 1)
+
+        self.btn_img_dir = QPushButton(self.centralwidget)
+        self.btn_img_dir.setObjectName(u"btn_img_dir")
+
+        self.load_grid.addWidget(self.btn_img_dir, 0, 1, 1, 1)
+
+        self.btn_ages_list = QPushButton(self.centralwidget)
+        self.btn_ages_list.setObjectName(u"btn_ages_list")
+
+        self.load_grid.addWidget(self.btn_ages_list, 0, 4, 1, 1)
+
+        self.lbl_ages_list = QLabel(self.centralwidget)
+        self.lbl_ages_list.setObjectName(u"lbl_ages_list")
+
+        self.load_grid.addWidget(self.lbl_ages_list, 1, 4, 1, 1)
+
+        self.horizontalLayout = QHBoxLayout()
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.label_tolerance = QLabel(self.centralwidget)
+        self.label_tolerance.setObjectName(u"label_tolerance")
+
+        self.horizontalLayout.addWidget(self.label_tolerance)
+
+        self.lineEdit = QLineEdit(self.centralwidget)
+        self.lineEdit.setObjectName(u"lineEdit")
+        sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.lineEdit.sizePolicy().hasHeightForWidth())
+        self.lineEdit.setSizePolicy(sizePolicy)
+        self.lineEdit.setMaximumSize(QSize(50, 16777215))
+
+        self.horizontalLayout.addWidget(self.lineEdit)
+
+
+        self.load_grid.addLayout(self.horizontalLayout, 1, 5, 1, 1)
 
 
         self.gridLayout_2.addLayout(self.load_grid, 0, 0, 1, 1)
@@ -162,15 +194,18 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
         self.actionSave.setText(QCoreApplication.translate("MainWindow", u"Save", None))
+        self.lbl_out_dir.setText(QCoreApplication.translate("MainWindow", u"not available", None))
         self.lbl_anno_dir.setText(QCoreApplication.translate("MainWindow", u"not available", None))
         self.btn_out_dir.setText(QCoreApplication.translate("MainWindow", u"Output directory", None))
-        self.btn_anno_dir.setText(QCoreApplication.translate("MainWindow", u"Annotations directory", None))
-        self.lbl_out_dir.setText(QCoreApplication.translate("MainWindow", u"not available", None))
         self.btn_img_list.setText(QCoreApplication.translate("MainWindow", u"Image Textfile", None))
-        self.btn_img_dir.setText(QCoreApplication.translate("MainWindow", u"Image directory", None))
         self.lbl_img_list.setText(QCoreApplication.translate("MainWindow", u"not available", None))
         self.lbl_img_dir.setText(QCoreApplication.translate("MainWindow", u"not available", None))
+        self.btn_anno_dir.setText(QCoreApplication.translate("MainWindow", u"Annotations directory", None))
         self.btn_start.setText(QCoreApplication.translate("MainWindow", u"Start Evaluation", None))
+        self.btn_img_dir.setText(QCoreApplication.translate("MainWindow", u"Image directory", None))
+        self.btn_ages_list.setText(QCoreApplication.translate("MainWindow", u"Ages Textfile", None))
+        self.lbl_ages_list.setText(QCoreApplication.translate("MainWindow", u"not available", None))
+        self.label_tolerance.setText(QCoreApplication.translate("MainWindow", u"Tolerance %", None))
         self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
         self.menuHelp.setTitle(QCoreApplication.translate("MainWindow", u"Help", None))
     # retranslateUi
@@ -182,19 +217,34 @@ class fr_MainWindow(QMainWindow, Ui_MainWindow):
         super(fr_MainWindow, self).__init__(parent)
         qApp.installEventFilter(self)
         self.setupUi(self)
-        path = 'c:\\tmp\\aesthetics\\'
+        path = 'c:/tmp/aesthetics/'
 
         self.btn_img_dir.clicked.connect(self.buttonClicked)
         self.btn_img_list.clicked.connect(self.buttonClicked)
         self.btn_anno_dir.clicked.connect(self.buttonClicked)
         self.btn_out_dir.clicked.connect(self.buttonClicked)
         self.btn_start.clicked.connect(self.buttonClicked)
+        self.btn_ages_list.clicked.connect(self.buttonClicked)
 
         self.lbl_out_dir.setText(str(path) + 'Output')
         self.lbl_img_dir.setText(str(path) + 'Pictures2020')
         self.lbl_anno_dir.setText(str(path) + 'out2020')
         self.lbl_img_list.setText(str(path) + 'annotations2020.dat')
+        self.lbl_ages_list.setText(str(path) + 'alter.txt')
         self.show()
+
+    def showdialog(self, title, text, info, details):
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Information)
+
+        msg.setText(text)
+        msg.setInformativeText(info)
+        msg.setWindowTitle(title)
+        msg.setDetailedText(details)
+        msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+
+        retval = msg.exec_()
+        print("value of pressed message box button:", retval)
 
     def buttonClicked(self):
         sender = self.sender()
@@ -225,49 +275,65 @@ class fr_MainWindow(QMainWindow, Ui_MainWindow):
             print(fname)
             self.lbl_out_dir.setText(fname)
 
+        elif sender.text() == 'Ages Textfile':
+            print("> you pressed " + sender.text())
+            fname = QFileDialog.getOpenFileName(self, 'Open file',
+                                                filter="Aesthetics data file (*.dat *.txt)")
+            print(fname)
+            self.lbl_ages_list.setText(fname[0])
+
         elif sender.text() == 'Start Evaluation':
-            dm = DataMatrix(self.lbl_img_list.text(), self.lbl_anno_dir.text(), self.lbl_img_dir.text(),
-                            self.lbl_out_dir.text(), 20)
-            self.plainTextEdit.setPlainText(dm.get_dataset_properties())
-            self.output_log.setPlainText(dm.output_log)
+            tol = 0
+            try:
+                tol = int(self.lineEdit.text())
+            except:
+                tol = None
+            if not isinstance(tol, int):
+                self.showdialog("Evaluation Error", "No tolerance value set", "Tolerance value is not a valid integer",
+                                "Please insert a valid integer")
+            else:
+                dm = DataMatrix(self.lbl_img_list.text(), self.lbl_anno_dir.text(), self.lbl_img_dir.text(),
+                                self.lbl_out_dir.text(), self.lbl_ages_list.text(), tol)
+                self.plainTextEdit.setPlainText(dm.get_dataset_properties())
+                self.output_log.setPlainText(dm.output_log)
 
-            # plot histogram 1
-            self.hist1_widget.canvas.figure.clear()
-            ax = self.hist1_widget.canvas.figure.subplots()
-            ax.clear()
-            ax.hist(dm.hist1_canvas, bins=8)
-            self.hist1_widget.canvas.draw()
+                # plot histogram 1
+                self.hist1_widget.canvas.figure.clear()
+                ax = self.hist1_widget.canvas.figure.subplots()
+                ax.clear()
+                ax.hist(dm.hist1_canvas, bins=8)
+                self.hist1_widget.canvas.draw()
 
-            # plot histogram 2
-            self.hist2_widget.canvas.figure.clear()
-            ax = self.hist2_widget.canvas.figure.subplots()
-            ax.clear()
-            ax.hist(dm.hist2_canvas, bins=30)
-            self.hist2_widget.canvas.draw()
+                # plot histogram 2
+                self.hist2_widget.canvas.figure.clear()
+                ax = self.hist2_widget.canvas.figure.subplots()
+                ax.clear()
+                ax.hist(dm.hist2_canvas, bins=30)
+                self.hist2_widget.canvas.draw()
 
-            # plot miss attractive
-            self.attr_widget.canvas.figure.clear()
-            ax = self.attr_widget.canvas.figure.subplots()
-            ax.clear()
-            ax.axis('off')
-            ax.set_title('Miss Aesthetics')
-            ax.imshow(dm.attr_canvas)
-            self.attr_widget.canvas.draw()
+                # plot miss attractive
+                self.attr_widget.canvas.figure.clear()
+                ax = self.attr_widget.canvas.figure.subplots()
+                ax.clear()
+                ax.axis('off')
+                ax.set_title('Miss Aesthetics')
+                ax.imshow(dm.attr_canvas)
+                self.attr_widget.canvas.draw()
 
-            # plot correlation of age and aesthetics
-            min, max, attr, avg, var = dm.get_age_data()
-            x = list(range(min, max))
-            self.ac_widget2.canvas.figure.clear()
-            ax = self.ac_widget2.canvas.figure.subplots()
-            ax.clear()
-            ax.set_title('Correlation of Aesthetics and Age')
-            for i in range(0, max-min):
-                for score in attr[i]:
-                    ax.plot(min+i, score, '.')
-                    # print(str(min+i) + ' ' + str(score))
-            ax.plot(x, avg, '-', color='b')
+                # plot correlation of age and aesthetics
+                min, max, attr, avg, var = dm.get_age_data()
+                x = list(range(min, max))
+                self.ac_widget2.canvas.figure.clear()
+                ax = self.ac_widget2.canvas.figure.subplots()
+                ax.clear()
+                ax.set_title('Correlation of Aesthetics and Age')
+                for i in range(0, max-min):
+                    for score in attr[i]:
+                        ax.plot(min+i, score, '.')
+                        # print(str(min+i) + ' ' + str(score))
+                ax.plot(x, avg, '-', color='b')
 
-            self.ac_widget2.canvas.draw()
+                self.ac_widget2.canvas.draw()
 
 
 if __name__ == "__main__":
@@ -288,4 +354,5 @@ if __name__ == 'c__main__':
     load = str(path) + 'annotations2020.dat'
     image = str(path) + 'Pictures2020'
     out = str(path) + 'Output'
-    dm = DataMatrix(load, f, image, out, 50)
+    age = str(path) + 'alter.txt'
+    dm = DataMatrix(load, f, image, out, age, -5)

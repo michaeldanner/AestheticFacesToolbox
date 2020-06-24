@@ -27,7 +27,7 @@ class DataMatrix:
     image_path = ''
     output_dir = ''
     anno_dat = ''
-    age_dat = 'c:\\tmp\\aesthetics\\alter.txt'
+    age_dat = ''
     anno_files = ''
     output_log = ''
     hist1_canvas = None
@@ -39,12 +39,23 @@ class DataMatrix:
     min_age = 0
     max_age = 100
 
-    def __init__(self, anno_dat, anno_files, image_path, output_dir, tolerance):
+    def __init__(self, anno_dat, anno_files, image_path, output_dir, ages_dat, tolerance):
+        self.count_annos = 0
+        self.count_skipped = 0
+        self.count_error = 0
+        self.A_data = []
+        self.anno_list = []
+        self.image_list = []
+        self.image_names_list = []
+        self.matr_list = []
+        self.age_list = []
+        self.score_list = []
         self.tolerance = tolerance
         self.anno_dat = anno_dat
         self.anno_files = anno_files
         self.image_path = image_path
         self.output_dir = output_dir
+        self.age_dat = ages_dat
         self.load_dataset()
         self.generate_datamatrix()
         self.estimate_images()
@@ -158,9 +169,13 @@ class DataMatrix:
         num_all_pairs = (self.num_probs-1)*self.num_probs / math.factorial(2)
         print('number of all possible pairs: {:g} by {:d} images -> {:d}({:1.3f}%) annotated of {:g} poss. pairs.\n'.format(
             num_all_pairs, self.num_probs, self.num_pairs, self.num_pairs/num_all_pairs*100, num_all_pairs))
+        print(self.anno_list)
         for anno in self.anno_list:
-            match = re.search(r'_\d\d\d\d\d\d_', anno)
-            match = str(match.group(0)).rstrip('_').lstrip('_')
+            try:
+                match = re.search(r'_\d\d\d\d\d\d_', anno)
+                match = str(match.group(0)).rstrip('_').lstrip('_')
+            except AttributeError as err:
+                match = None
             if not match:
                 print(str(anno) + " ERROR: not correct anno-name (no 6 digits, too long, too short or not unique)")
             else:
