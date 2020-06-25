@@ -1,12 +1,14 @@
 import sys, os
 
 from datamatrix import DataMatrix
-from PyQt5.QtCore import QCoreApplication, QDate, QDateTime, QMetaObject, QObject, QPoint, QRect, QSize, QTime, QUrl, Qt
+from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5 import QtWidgets
+from PyQt5.QtCore import QEvent
 
 from mplwidget import MplWidget
+from gallerypopup import GalleryPopup
 
 
 class Ui_MainWindow(object):
@@ -33,17 +35,39 @@ class Ui_MainWindow(object):
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.verticalLayout.setSizeConstraint(QLayout.SetDefaultConstraint)
         self.verticalLayout.setContentsMargins(-1, -1, 0, -1)
+        self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.horizontalLayout_2.setContentsMargins(-1, 0, -1, -1)
         self.hist1_widget = MplWidget(self.centralwidget)
         self.hist1_widget.setObjectName(u"hist1_widget")
         self.hist1_widget.setMinimumSize(QSize(100, 50))
 
-        self.verticalLayout.addWidget(self.hist1_widget)
+        self.horizontalLayout_2.addWidget(self.hist1_widget)
 
+        self.hist3_widget = MplWidget(self.centralwidget)
+        self.hist3_widget.setObjectName(u"hist3_widget")
+
+        self.horizontalLayout_2.addWidget(self.hist3_widget)
+
+
+        self.verticalLayout.addLayout(self.horizontalLayout_2)
+
+        self.horizontalLayout_3 = QHBoxLayout()
+        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
+        self.horizontalLayout_3.setContentsMargins(-1, 0, -1, -1)
         self.hist2_widget = MplWidget(self.centralwidget)
         self.hist2_widget.setObjectName(u"hist2_widget")
         self.hist2_widget.setMinimumSize(QSize(100, 50))
 
-        self.verticalLayout.addWidget(self.hist2_widget)
+        self.horizontalLayout_3.addWidget(self.hist2_widget)
+
+        self.hist4_widget = MplWidget(self.centralwidget)
+        self.hist4_widget.setObjectName(u"hist4_widget")
+
+        self.horizontalLayout_3.addWidget(self.hist4_widget)
+
+
+        self.verticalLayout.addLayout(self.horizontalLayout_3)
 
         self.attr_widget = MplWidget(self.centralwidget)
         self.attr_widget.setObjectName(u"attr_widget")
@@ -212,6 +236,8 @@ class Ui_MainWindow(object):
 
 
 class fr_MainWindow(QMainWindow, Ui_MainWindow):
+    image_list = []
+    age_data = None
 
     def __init__(self, parent=None):
         super(fr_MainWindow, self).__init__(parent)
@@ -225,6 +251,8 @@ class fr_MainWindow(QMainWindow, Ui_MainWindow):
         self.btn_out_dir.clicked.connect(self.buttonClicked)
         self.btn_start.clicked.connect(self.buttonClicked)
         self.btn_ages_list.clicked.connect(self.buttonClicked)
+        self.attr_widget.canvas.mpl_connect('button_press_event', self._on_press)
+        self.ac_widget2.canvas.mpl_connect('button_press_event', self._on_press_ac)
 
         self.lbl_out_dir.setText(str(path) + 'Output')
         self.lbl_img_dir.setText(str(path) + 'Pictures2020')
@@ -232,6 +260,41 @@ class fr_MainWindow(QMainWindow, Ui_MainWindow):
         self.lbl_img_list.setText(str(path) + 'annotations2020.dat')
         self.lbl_ages_list.setText(str(path) + 'alter.txt')
         self.show()
+
+    @pyqtSlot(QWidget)
+    def _on_press(self, event):
+        print(event)
+        self.gpop = GalleryPopup(self)
+        self.gpop.setGeometry(50, 50, 600, 400)
+        self.gpop.populate(self.image_list, self.lbl_img_dir.text())
+        self.gpop.show()
+
+    @pyqtSlot(QWidget)
+    def _on_press_ac(self, event):
+        print(event)
+        self.gpop = QDialog(self)
+        # plot correlation of age and aesthetics
+        min, max, attr, avg, var = self.age_data
+        x = list(range(min, max))
+        self.acw = MplWidget(self.centralwidget)
+        self.acw.setObjectName(u"ac_widget2")
+        self.acw.setMinimumSize(QSize(100, 50))
+
+        self.gpop.setLayout(QGridLayout(self))
+        self.gpop.layout().addWidget(self.acw)
+        self.acw.canvas.figure.clear()
+        ax = self.acw.canvas.figure.subplots()
+        ax.clear()
+        ax.set_title('Correlation of Aesthetics and Age')
+        for i in range(0, max - min):
+            for score in attr[i]:
+                ax.plot(min + i, score, '.')
+                # print(str(min+i) + ' ' + str(score))
+        ax.plot(x, avg, '-', color='b')
+
+        self.acw.canvas.draw()
+        self.gpop.setGeometry(50, 50, 1200, 800)
+        self.gpop.show()
 
     def showdialog(self, title, text, info, details):
         msg = QMessageBox()
@@ -249,6 +312,8 @@ class fr_MainWindow(QMainWindow, Ui_MainWindow):
     def start_evaluation(self, tol):
         dm = DataMatrix(self.lbl_img_list.text(), self.lbl_anno_dir.text(), self.lbl_img_dir.text(),
                         self.lbl_out_dir.text(), self.lbl_ages_list.text(), tol)
+        self.image_list = dm.image_list
+        print(self.image_list)
         self.plainTextEdit.setPlainText(dm.get_dataset_properties())
         self.output_log.setPlainText(dm.output_log)
 
@@ -266,6 +331,20 @@ class fr_MainWindow(QMainWindow, Ui_MainWindow):
         ax.hist(dm.hist2_canvas, bins=30)
         self.hist2_widget.canvas.draw()
 
+        # plot histogram 2
+        self.hist3_widget.canvas.figure.clear()
+        ax = self.hist3_widget.canvas.figure.subplots()
+        ax.clear()
+        ax.hist(dm.num_value_0_with_large_sc, bins=100)
+        self.hist3_widget.canvas.draw()
+
+        # plot histogram 2
+        self.hist4_widget.canvas.figure.clear()
+        ax = self.hist4_widget.canvas.figure.subplots()
+        ax.clear()
+        ax.hist(dm.num_value_1_with_small_sc, bins=100)
+        self.hist4_widget.canvas.draw()
+
         # plot miss attractive
         self.attr_widget.canvas.figure.clear()
         ax = self.attr_widget.canvas.figure.subplots()
@@ -276,7 +355,8 @@ class fr_MainWindow(QMainWindow, Ui_MainWindow):
         self.attr_widget.canvas.draw()
 
         # plot correlation of age and aesthetics
-        min, max, attr, avg, var = dm.get_age_data()
+        self.age_data = dm.get_age_data()
+        min, max, attr, avg, var = self.age_data
         x = list(range(min, max))
         self.ac_widget2.canvas.figure.clear()
         ax = self.ac_widget2.canvas.figure.subplots()
@@ -292,6 +372,7 @@ class fr_MainWindow(QMainWindow, Ui_MainWindow):
 
     def buttonClicked(self):
         sender = self.sender()
+        print(sender)
 
         if sender.text() == 'Image Textfile':
             # self.rot += 0.1

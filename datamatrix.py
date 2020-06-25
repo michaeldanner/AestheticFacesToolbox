@@ -22,9 +22,11 @@ class DataMatrix:
     matr_list = []
     age_list = []
     score_list = []
+    num_value_0_with_large_sc = []
+    num_value_1_with_small_sc = []
     tolerance = 100
-    limit_div_0_with_large = 304
-    limit_div_1_with_small = 344  # Threshold for too_divers, if > limit_divers (on LFW)
+    limit_div_0_with_large = 600
+    limit_div_1_with_small = 600  # Threshold for too_divers, if > limit_divers (on LFW)
     image_path = ''
     output_dir = ''
     anno_dat = ''
@@ -51,6 +53,8 @@ class DataMatrix:
         self.matr_list = []
         self.age_list = []
         self.score_list = []
+        self.num_value_0_with_large_sc = []
+        self.num_value_1_with_small_sc = []
         self.tolerance = tolerance
         self.anno_dat = anno_dat
         self.anno_files = anno_files
@@ -61,10 +65,6 @@ class DataMatrix:
         self.generate_datamatrix()
         self.estimate_images()
         self.normal_rank_graph()
-
-    def load_image_list(self):
-        with open(self.image_path) as image:
-            self.image_list.append(image)
 
     def load_dataset(self):
         """
@@ -162,7 +162,7 @@ class DataMatrix:
         output_log += f'{count[0]:d} Annotations scanned, {count[1]:d} skipped, {count[0] - count[1]:d} Annotations in Datamatrix\n'
         self.output_log = output_log
 
-        np.savetxt((str(self.anno_files)+'/datamatrix.txt'), self.A_data, fmt='%d', delimiter=' ', )
+        np.savetxt((str(self.output_dir)+'/datamatrix.txt'), self.A_data, fmt='%d', delimiter=' ', )
 
     def estimate_images(self):
         print(self.image_path)
@@ -196,10 +196,35 @@ class DataMatrix:
         sum_per_col_valid = np.sum(B, axis=0)
         sc = 1.0 * sum_per_col_valid / valid_per_col
         self.score_list = sc
+        num_value_0_with_large_sc = []
+        num_value_1_with_small_sc = []
+        for row in V:
+            num_value_0_with_large_sc.append(0)
+            num_value_1_with_small_sc.append(0)
+            for i in range(0, len(row)):
+                if row[i] == 1 and sc[i] < 0.5:
+                    num_value_1_with_small_sc[-1] += 1
+                elif row[i] == 0 and sc[i] > 0.5:
+                    num_value_0_with_large_sc[-1] += 1
+        self.num_value_1_with_small_sc = num_value_1_with_small_sc
+        self.num_value_0_with_large_sc = num_value_0_with_large_sc
+
         print(np.argmax(sc))
         sc_sort = np.argsort(sc)
         miss_attr = self.image_path + os.sep + self.image_names_list[sc_sort[-1]].split(' ')[0]
         print(miss_attr)
+        self.image_list = []
+        for i in range(len(sc)):
+            self.image_list.append(self.image_names_list[sc_sort[-1-i]])
+            path, fname = (self.image_names_list[sc_sort[-1-i]].split(' ')[0]).split('/')
+            img_load = self.image_path + os.sep + self.image_names_list[sc_sort[-1-i]].split(' ')[0]
+            img = Image.open(img_load)
+            if not os.path.exists(self.output_dir + "/sc_images/"):
+                os.mkdir(self.output_dir + "/sc_images/")
+            img_save = self.output_dir + "/sc_images/{:.3f}".format(sc[sc_sort[-1-i]]) + "_" + fname.split('dummy')[0] + ".jpg"
+            print(img_save)
+            img.save(img_save)
+
         self.hist1_canvas = valid_per_col
         self.hist2_canvas = sc
 
