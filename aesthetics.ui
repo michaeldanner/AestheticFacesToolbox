@@ -18,20 +18,85 @@
     <item row="2" column="0">
      <layout class="QGridLayout" name="log_grid">
       <item row="0" column="1">
-       <widget class="QPlainTextEdit" name="output_log">
+       <widget class="QTableWidget" name="tbl_anno_data">
         <property name="minimumSize">
          <size>
-          <width>400</width>
+          <width>300</width>
           <height>0</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>400</width>
+          <width>500</width>
           <height>16777215</height>
          </size>
         </property>
+        <property name="sortingEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="rowCount">
+         <number>12</number>
+        </property>
+        <property name="columnCount">
+         <number>12</number>
+        </property>
+        <attribute name="horizontalHeaderCascadingSectionResizes">
+         <bool>false</bool>
+        </attribute>
+        <attribute name="horizontalHeaderMinimumSectionSize">
+         <number>19</number>
+        </attribute>
+        <attribute name="horizontalHeaderDefaultSectionSize">
+         <number>25</number>
+        </attribute>
+        <attribute name="verticalHeaderMinimumSectionSize">
+         <number>15</number>
+        </attribute>
+        <attribute name="verticalHeaderDefaultSectionSize">
+         <number>18</number>
+        </attribute>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <row/>
+        <column/>
+        <column/>
+        <column/>
+        <column/>
+        <column/>
+        <column/>
+        <column/>
+        <column/>
+        <column/>
+        <column/>
+        <column/>
+        <column/>
        </widget>
+      </item>
+      <item row="0" column="5">
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="MplWidget" name="ac_widget2" native="true">
+          <property name="minimumSize">
+           <size>
+            <width>300</width>
+            <height>50</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item row="0" column="4">
        <layout class="QVBoxLayout" name="verticalLayout">
@@ -54,10 +119,29 @@
               <height>50</height>
              </size>
             </property>
+            <property name="maximumSize">
+             <size>
+              <width>300</width>
+              <height>16777215</height>
+             </size>
+            </property>
            </widget>
           </item>
           <item>
-           <widget class="MplWidget" name="hist3_widget" native="true"/>
+           <widget class="MplWidget" name="hist3_widget" native="true">
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>300</width>
+              <height>16777215</height>
+             </size>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -74,10 +158,29 @@
               <height>50</height>
              </size>
             </property>
+            <property name="maximumSize">
+             <size>
+              <width>300</width>
+              <height>16777215</height>
+             </size>
+            </property>
            </widget>
           </item>
           <item>
-           <widget class="MplWidget" name="hist4_widget" native="true"/>
+           <widget class="MplWidget" name="hist4_widget" native="true">
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>300</width>
+              <height>16777215</height>
+             </size>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -129,23 +232,6 @@
          <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
         </property>
        </widget>
-      </item>
-      <item row="0" column="5">
-       <layout class="QVBoxLayout" name="verticalLayout_2">
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <item>
-         <widget class="MplWidget" name="ac_widget2" native="true">
-          <property name="minimumSize">
-           <size>
-            <width>300</width>
-            <height>50</height>
-           </size>
-          </property>
-         </widget>
-        </item>
-       </layout>
       </item>
      </layout>
     </item>
@@ -233,6 +319,9 @@
       </item>
       <item row="1" column="5">
        <layout class="QHBoxLayout" name="horizontalLayout">
+        <property name="rightMargin">
+         <number>20</number>
+        </property>
         <item>
          <widget class="QLabel" name="label_tolerance">
           <property name="text">

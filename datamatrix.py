@@ -24,6 +24,8 @@ class DataMatrix:
     score_list = []
     num_value_0_with_large_sc = []
     num_value_1_with_small_sc = []
+    table_annodata = None   # course, name, nr, age, sex, 5 percent,
+                            # 6 status, diverse0, diverse1, divers0p, divers1p, 11 amount
     tolerance = 100
     limit_div_0_with_large = 600
     limit_div_1_with_small = 600  # Threshold for too_divers, if > limit_divers (on LFW)
@@ -126,36 +128,62 @@ class DataMatrix:
     def generate_datamatrix(self):
         output_log = ''
         count = [0, 0, 0]  # number of annotations, number of skipped, number of errors
-        for subpath in glob.glob(str(self.anno_files + "\\*")):
-            # subpath is annotations folder, which is students matricle number
-            rand, value = self.load_annotations(subpath)
-            if len(rand) > 1 and len(value) > 1:
-                valneu = np.full((self.num_probs), 2)
+        amount = len(list(os.walk(self.anno_files)))+2
+        ta = np.empty((amount, 12), dtype="S10")
+        i = 0
+        for subpath in glob.glob(str(self.anno_files + "/*")):
+            if os.path.isdir(subpath):
+                # subpath is annotations folder, which contains students matricle number
+                rand, value = self.load_annotations(subpath)
                 _, f = os.path.split(subpath)
-                for val in value:
-                    if val[0] < 1 or val[0] > self.num_pairs:
-                        print("warning: unvalid index 0 < val(%d,1)=%d < num_pairs(%d) => ignore value")
-                    if val[1] < 0 or val[1] > 1:
-                        print("warning: value(%d)~= 0 or 1 => set to value and pair to -1 and go on")
-                    try:
-                        valneu[rand[val[0]-1]] = val[1]
-                        valneu[rand[val[0]+self.num_pairs-1]] = not val[1]
-                    except IndexError as err:
-                        print(str(err) + ' in folder ' + str(f))
-                        output_log += str(err) + ' in folder ' + str(f) + '\n'
-                        count[2] += 1
-                # print(valneu)
-                done = 100 - (np.sum(valneu) - self.num_pairs) / 3.0 / self.num_pairs * 100
-                count[0] += 1
-                output_log += str(count[0]) + '  ' + (str(f) + f" \t - Annotations: {done:3.1f}%")
+                print(str(i) + " - " + str(f))
+                try:
+                    ta[i][0], ta[i][1], ta[i][2], ta[i][3], ta[i][4] = f.split('_', 4)
+                    ta[i][3] = ta[i][3][:1]
+                except:
+                    print("error in anno_list: " + str(f))
 
-                if done >= self.tolerance:
-                    self.A_data.append(valneu)
-                    self.anno_list.append(str(f))
+                if len(rand) <= 1 or len(value) <= 1:
+                    ta[i][6] = 'error'
+                    count[0] += 1  # total
+                    count[2] += 1  # error
+                    print("Error in folder: " + str(f))
+                    i += 1
                 else:
-                    count[1] += 1
-                    output_log += " - skipped"
-                output_log += '\n'
+                    valneu = np.full((self.num_probs), 2)
+                    for val in value:
+                        if val[0] < 1 or val[0] > self.num_pairs:
+                            print("warning: unvalid index 0 < val(%d,1)=%d < num_pairs(%d) => ignore value")
+                        if val[1] < 0 or val[1] > 1:
+                            print("warning: value(%d)~= 0 or 1 => set to value and pair to -1 and go on")
+                        try:
+                            valneu[rand[val[0]-1]] = val[1]
+                            valneu[rand[val[0]+self.num_pairs-1]] = not val[1]
+                        except IndexError as err:
+                            print(str(err) + ' in folder ' + str(f))
+                            output_log += str(err) + ' in folder ' + str(f) + '\n'
+                            count[2] += 1
+                            ta[i][6] = 'error'
+                            break
+
+                    if ta[i][6] != 'error':
+                        done = 100 - (np.sum(valneu) - self.num_pairs) / 3.0 / self.num_pairs * 100
+                        count[0] += 1
+                        output_log += str(count[0]) + '  ' + (str(f) + f" \t - Annotations: {done:3.1f}%")
+                        ta[i][5] = f"{done:2.1f}"
+
+                        if done >= self.tolerance :
+                            self.A_data.append(valneu)
+                            self.anno_list.append(str(f))
+                            ta[i][6] = 'pass'
+                        elif ta[i][6] != 'error':
+                            count[1] += 1
+                            output_log += " - skipped"
+                            ta[i][6] = 'skip'
+                        output_log += '\n'
+                    i += 1
+
+        self.table_annodata = ta
         self.count_annos = count[0] - count[1] - count[2]
         self.count_skipped = count[1]
         self.count_error = count[2]
@@ -198,16 +226,32 @@ class DataMatrix:
         self.score_list = sc
         num_value_0_with_large_sc = []
         num_value_1_with_small_sc = []
+        n = 0
+        k = 0
         for row in V:
             num_value_0_with_large_sc.append(0)
             num_value_1_with_small_sc.append(0)
             for i in range(0, len(row)):
-                if row[i] == 1 and sc[i] < 0.5:
-                    num_value_1_with_small_sc[-1] += 1
-                elif row[i] == 0 and sc[i] > 0.5:
-                    num_value_0_with_large_sc[-1] += 1
+                score = sc[i]
+                if row[i] == 1 and score < 0.5:
+                    num_value_1_with_small_sc[-1] += (0.5 - score)**4 * 10000
+                elif row[i] == 0 and score > 0.5:
+                    num_value_0_with_large_sc[-1] += (score - 0.5)**4 * 10000
+
+            while self.table_annodata[n+k][6] != b'pass':
+                k += 1
+
+            self.table_annodata[n+k][7] = f"{num_value_0_with_large_sc[n]:1.1f}"
+            self.table_annodata[n+k][8] = f"{num_value_1_with_small_sc[n]:1.1f}"
+            d0 = num_value_0_with_large_sc[n] * 100 / self.num_probs / float(self.table_annodata[n + k][5])
+            self.table_annodata[n+k][9] = f"{d0:.2f}"
+            d1 = num_value_1_with_small_sc[n] * 100 / self.num_probs / float(self.table_annodata[n + k][5])
+            self.table_annodata[n+k][10] = f"{d1:.2f}"
+            n += 1
         self.num_value_1_with_small_sc = num_value_1_with_small_sc
         self.num_value_0_with_large_sc = num_value_0_with_large_sc
+
+
 
         print(np.argmax(sc))
         sc_sort = np.argsort(sc)
@@ -282,7 +326,7 @@ class DataMatrix:
 
     def get_dataset_properties(self):
         ret_str = 'Images:\t' + str(self.num_probs) + '\nPairs:\t' + str(self.num_pairs)
-        ret_str += '\n\nAnnotations\ntotal:\t' + str(self.count_annos + self.count_skipped)
+        ret_str += '\n\nAnnotations\ntotal:\t' + str(self.count_annos + self.count_skipped + self.count_error)
         ret_str += '\nvalid:\t' + str(self.count_annos)
         ret_str += '\nskipped:\t' + str(self.count_skipped)
         ret_str += '\nerror:\t' + str(self.count_error)

@@ -1,248 +1,25 @@
 import sys, os
-
+import numpy as np
 from datamatrix import DataMatrix
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, uic
 from PyQt5.QtCore import QEvent
 
 from mplwidget import MplWidget
 from gallerypopup import GalleryPopup
 
 
-class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
-        if not MainWindow.objectName():
-            MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1089, 681)
-        self.actionSave = QAction(MainWindow)
-        self.actionSave.setObjectName(u"actionSave")
-        self.centralwidget = QWidget(MainWindow)
-        self.centralwidget.setObjectName(u"centralwidget")
-        self.gridLayout_2 = QGridLayout(self.centralwidget)
-        self.gridLayout_2.setObjectName(u"gridLayout_2")
-        self.log_grid = QGridLayout()
-        self.log_grid.setObjectName(u"log_grid")
-        self.output_log = QPlainTextEdit(self.centralwidget)
-        self.output_log.setObjectName(u"output_log")
-        self.output_log.setMinimumSize(QSize(400, 0))
-        self.output_log.setMaximumSize(QSize(400, 16777215))
-
-        self.log_grid.addWidget(self.output_log, 0, 1, 1, 1)
-
-        self.verticalLayout = QVBoxLayout()
-        self.verticalLayout.setObjectName(u"verticalLayout")
-        self.verticalLayout.setSizeConstraint(QLayout.SetDefaultConstraint)
-        self.verticalLayout.setContentsMargins(-1, -1, 0, -1)
-        self.horizontalLayout_2 = QHBoxLayout()
-        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.horizontalLayout_2.setContentsMargins(-1, 0, -1, -1)
-        self.hist1_widget = MplWidget(self.centralwidget)
-        self.hist1_widget.setObjectName(u"hist1_widget")
-        self.hist1_widget.setMinimumSize(QSize(100, 50))
-
-        self.horizontalLayout_2.addWidget(self.hist1_widget)
-
-        self.hist3_widget = MplWidget(self.centralwidget)
-        self.hist3_widget.setObjectName(u"hist3_widget")
-
-        self.horizontalLayout_2.addWidget(self.hist3_widget)
-
-
-        self.verticalLayout.addLayout(self.horizontalLayout_2)
-
-        self.horizontalLayout_3 = QHBoxLayout()
-        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
-        self.horizontalLayout_3.setContentsMargins(-1, 0, -1, -1)
-        self.hist2_widget = MplWidget(self.centralwidget)
-        self.hist2_widget.setObjectName(u"hist2_widget")
-        self.hist2_widget.setMinimumSize(QSize(100, 50))
-
-        self.horizontalLayout_3.addWidget(self.hist2_widget)
-
-        self.hist4_widget = MplWidget(self.centralwidget)
-        self.hist4_widget.setObjectName(u"hist4_widget")
-
-        self.horizontalLayout_3.addWidget(self.hist4_widget)
-
-
-        self.verticalLayout.addLayout(self.horizontalLayout_3)
-
-        self.attr_widget = MplWidget(self.centralwidget)
-        self.attr_widget.setObjectName(u"attr_widget")
-        self.attr_widget.setMinimumSize(QSize(100, 50))
-
-        self.verticalLayout.addWidget(self.attr_widget)
-
-
-        self.log_grid.addLayout(self.verticalLayout, 0, 4, 1, 1)
-
-        self.plainTextEdit = QPlainTextEdit(self.centralwidget)
-        self.plainTextEdit.setObjectName(u"plainTextEdit")
-        self.plainTextEdit.setMinimumSize(QSize(120, 0))
-        self.plainTextEdit.setMaximumSize(QSize(120, 16777215))
-        self.plainTextEdit.setFrameShape(QFrame.StyledPanel)
-        self.plainTextEdit.setFrameShadow(QFrame.Sunken)
-        self.plainTextEdit.setMidLineWidth(1)
-        self.plainTextEdit.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.plainTextEdit.setSizeAdjustPolicy(QAbstractScrollArea.AdjustIgnored)
-        self.plainTextEdit.setLineWrapMode(QPlainTextEdit.NoWrap)
-        self.plainTextEdit.setTextInteractionFlags(Qt.TextSelectableByKeyboard|Qt.TextSelectableByMouse)
-
-        self.log_grid.addWidget(self.plainTextEdit, 0, 0, 1, 1)
-
-        self.verticalLayout_2 = QVBoxLayout()
-        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
-        self.verticalLayout_2.setContentsMargins(-1, -1, 0, -1)
-        self.ac_widget2 = MplWidget(self.centralwidget)
-        self.ac_widget2.setObjectName(u"ac_widget2")
-        self.ac_widget2.setMinimumSize(QSize(100, 50))
-
-        self.verticalLayout_2.addWidget(self.ac_widget2)
-
-
-        self.log_grid.addLayout(self.verticalLayout_2, 0, 5, 1, 1)
-
-
-        self.gridLayout_2.addLayout(self.log_grid, 2, 0, 1, 1)
-
-        self.load_grid = QGridLayout()
-        self.load_grid.setObjectName(u"load_grid")
-        self.load_grid.setSizeConstraint(QLayout.SetFixedSize)
-        self.lbl_out_dir = QLabel(self.centralwidget)
-        self.lbl_out_dir.setObjectName(u"lbl_out_dir")
-
-        self.load_grid.addWidget(self.lbl_out_dir, 1, 3, 1, 1)
-
-        self.lbl_anno_dir = QLabel(self.centralwidget)
-        self.lbl_anno_dir.setObjectName(u"lbl_anno_dir")
-
-        self.load_grid.addWidget(self.lbl_anno_dir, 1, 2, 1, 1)
-
-        self.btn_out_dir = QPushButton(self.centralwidget)
-        self.btn_out_dir.setObjectName(u"btn_out_dir")
-
-        self.load_grid.addWidget(self.btn_out_dir, 0, 3, 1, 1)
-
-        self.btn_img_list = QPushButton(self.centralwidget)
-        self.btn_img_list.setObjectName(u"btn_img_list")
-
-        self.load_grid.addWidget(self.btn_img_list, 0, 0, 1, 1)
-
-        self.lbl_img_list = QLabel(self.centralwidget)
-        self.lbl_img_list.setObjectName(u"lbl_img_list")
-
-        self.load_grid.addWidget(self.lbl_img_list, 1, 0, 1, 1)
-
-        self.lbl_img_dir = QLabel(self.centralwidget)
-        self.lbl_img_dir.setObjectName(u"lbl_img_dir")
-
-        self.load_grid.addWidget(self.lbl_img_dir, 1, 1, 1, 1)
-
-        self.btn_anno_dir = QPushButton(self.centralwidget)
-        self.btn_anno_dir.setObjectName(u"btn_anno_dir")
-
-        self.load_grid.addWidget(self.btn_anno_dir, 0, 2, 1, 1)
-
-        self.btn_start = QPushButton(self.centralwidget)
-        self.btn_start.setObjectName(u"btn_start")
-
-        self.load_grid.addWidget(self.btn_start, 0, 5, 1, 1)
-
-        self.btn_img_dir = QPushButton(self.centralwidget)
-        self.btn_img_dir.setObjectName(u"btn_img_dir")
-
-        self.load_grid.addWidget(self.btn_img_dir, 0, 1, 1, 1)
-
-        self.btn_ages_list = QPushButton(self.centralwidget)
-        self.btn_ages_list.setObjectName(u"btn_ages_list")
-
-        self.load_grid.addWidget(self.btn_ages_list, 0, 4, 1, 1)
-
-        self.lbl_ages_list = QLabel(self.centralwidget)
-        self.lbl_ages_list.setObjectName(u"lbl_ages_list")
-
-        self.load_grid.addWidget(self.lbl_ages_list, 1, 4, 1, 1)
-
-        self.horizontalLayout = QHBoxLayout()
-        self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.label_tolerance = QLabel(self.centralwidget)
-        self.label_tolerance.setObjectName(u"label_tolerance")
-
-        self.horizontalLayout.addWidget(self.label_tolerance)
-
-        self.lineEdit = QLineEdit(self.centralwidget)
-        self.lineEdit.setObjectName(u"lineEdit")
-        sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.lineEdit.sizePolicy().hasHeightForWidth())
-        self.lineEdit.setSizePolicy(sizePolicy)
-        self.lineEdit.setMaximumSize(QSize(50, 16777215))
-
-        self.horizontalLayout.addWidget(self.lineEdit)
-
-
-        self.load_grid.addLayout(self.horizontalLayout, 1, 5, 1, 1)
-
-
-        self.gridLayout_2.addLayout(self.load_grid, 0, 0, 1, 1)
-
-        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
-        self.gridLayout_2.addItem(self.horizontalSpacer, 1, 0, 1, 1)
-
-        MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QMenuBar(MainWindow)
-        self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1089, 21))
-        self.menuFile = QMenu(self.menubar)
-        self.menuFile.setObjectName(u"menuFile")
-        self.menuHelp = QMenu(self.menubar)
-        self.menuHelp.setObjectName(u"menuHelp")
-        MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QStatusBar(MainWindow)
-        self.statusbar.setObjectName(u"statusbar")
-        MainWindow.setStatusBar(self.statusbar)
-
-        self.menubar.addAction(self.menuFile.menuAction())
-        self.menubar.addAction(self.menuHelp.menuAction())
-        self.menuFile.addAction(self.actionSave)
-
-        self.retranslateUi(MainWindow)
-
-        QMetaObject.connectSlotsByName(MainWindow)
-    # setupUi
-
-    def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
-        self.actionSave.setText(QCoreApplication.translate("MainWindow", u"Save", None))
-        self.lbl_out_dir.setText(QCoreApplication.translate("MainWindow", u"not available", None))
-        self.lbl_anno_dir.setText(QCoreApplication.translate("MainWindow", u"not available", None))
-        self.btn_out_dir.setText(QCoreApplication.translate("MainWindow", u"Output directory", None))
-        self.btn_img_list.setText(QCoreApplication.translate("MainWindow", u"Image Textfile", None))
-        self.lbl_img_list.setText(QCoreApplication.translate("MainWindow", u"not available", None))
-        self.lbl_img_dir.setText(QCoreApplication.translate("MainWindow", u"not available", None))
-        self.btn_anno_dir.setText(QCoreApplication.translate("MainWindow", u"Annotations directory", None))
-        self.btn_start.setText(QCoreApplication.translate("MainWindow", u"Start Evaluation", None))
-        self.btn_img_dir.setText(QCoreApplication.translate("MainWindow", u"Image directory", None))
-        self.btn_ages_list.setText(QCoreApplication.translate("MainWindow", u"Ages Textfile", None))
-        self.lbl_ages_list.setText(QCoreApplication.translate("MainWindow", u"not available", None))
-        self.label_tolerance.setText(QCoreApplication.translate("MainWindow", u"Tolerance %", None))
-        self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
-        self.menuHelp.setTitle(QCoreApplication.translate("MainWindow", u"Help", None))
-    # retranslateUi
-
-
-class fr_MainWindow(QMainWindow, Ui_MainWindow):
+class fr_MainWindow(QMainWindow):
     image_list = []
     age_data = None
 
     def __init__(self, parent=None):
         super(fr_MainWindow, self).__init__(parent)
+        uic.loadUi('aesthetics.ui', self)
         qApp.installEventFilter(self)
-        self.setupUi(self)
+        # self.setupUi(self)
         path = 'c:/tmp/aesthetics/'
 
         self.btn_img_dir.clicked.connect(self.buttonClicked)
@@ -313,9 +90,29 @@ class fr_MainWindow(QMainWindow, Ui_MainWindow):
         dm = DataMatrix(self.lbl_img_list.text(), self.lbl_anno_dir.text(), self.lbl_img_dir.text(),
                         self.lbl_out_dir.text(), self.lbl_ages_list.text(), tol)
         self.image_list = dm.image_list
-        print(self.image_list)
         self.plainTextEdit.setPlainText(dm.get_dataset_properties())
-        self.output_log.setPlainText(dm.output_log)
+        # insert data in table:
+        tbl = dm.table_annodata
+
+        self.tbl_anno_data.setRowCount(np.size(tbl, 0))
+        self.tbl_anno_data.setColumnCount(np.size(tbl, 1))
+        self.tbl_anno_data.setHorizontalHeaderLabels(['sc', 'matr', 'age', 'g', 'no.', 'a%', 'state', 'd0', 'd1',
+                                                    'd0%', 'd1%', 'am'])
+        try:
+            self.tbl_anno_data.clearContents()
+        except Exception as err:
+            print(err)
+
+        try:
+            for row in range(np.size(tbl, 0)):
+                for column in range(np.size(tbl, 1)):
+                    try:
+                        item = str(tbl[row][column].decode("utf-8"))
+                        self.tbl_anno_data.setItem(row, column, QTableWidgetItem(item))
+                    except Exception as err:
+                        pass  # print("unknown error" + str(err))
+        except Exception as err:
+            print("unknown error in table" + str(err))
 
         # plot histogram 1
         self.hist1_widget.canvas.figure.clear()
@@ -445,8 +242,9 @@ if __name__ == "__main__":
 else:
     path = 'c:/tmp/aesthetics/'
     f = path + 'out2020'
+    # f = path + 'markuslenz'
     load = path + 'annotations2020.dat'
     image = path + 'Pictures2020'
     out = path + 'Output'
     age = path + 'alter.txt'
-    dm = DataMatrix(load, f, image, out, age, -5)
+    dm = DataMatrix(load, f, image, out, age, 9)
