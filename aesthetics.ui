@@ -21,7 +21,7 @@
        <widget class="QTableWidget" name="tbl_anno_data">
         <property name="minimumSize">
          <size>
-          <width>300</width>
+          <width>330</width>
           <height>0</height>
          </size>
         </property>
@@ -35,10 +35,10 @@
          <bool>true</bool>
         </property>
         <property name="rowCount">
-         <number>12</number>
+         <number>1</number>
         </property>
         <property name="columnCount">
-         <number>12</number>
+         <number>11</number>
         </property>
         <attribute name="horizontalHeaderCascadingSectionResizes">
          <bool>false</bool>
@@ -56,18 +56,6 @@
          <number>18</number>
         </attribute>
         <row/>
-        <row/>
-        <row/>
-        <row/>
-        <row/>
-        <row/>
-        <row/>
-        <row/>
-        <row/>
-        <row/>
-        <row/>
-        <row/>
-        <column/>
         <column/>
         <column/>
         <column/>

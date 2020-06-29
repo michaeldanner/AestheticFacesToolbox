@@ -128,8 +128,8 @@ class DataMatrix:
     def generate_datamatrix(self):
         output_log = ''
         count = [0, 0, 0]  # number of annotations, number of skipped, number of errors
-        amount = len(list(os.walk(self.anno_files)))+2
-        ta = np.empty((amount, 12), dtype="S10")
+        amount = len(list(os.walk(self.anno_files)))-1
+        ta = np.empty((amount, 11), dtype="S10")
         i = 0
         for subpath in glob.glob(str(self.anno_files + "/*")):
             if os.path.isdir(subpath):
@@ -166,17 +166,17 @@ class DataMatrix:
                             ta[i][6] = 'error'
                             break
 
-                    if ta[i][6] != 'error':
+                    if ta[i][6] != b'error':
                         done = 100 - (np.sum(valneu) - self.num_pairs) / 3.0 / self.num_pairs * 100
                         count[0] += 1
                         output_log += str(count[0]) + '  ' + (str(f) + f" \t - Annotations: {done:3.1f}%")
                         ta[i][5] = f"{done:2.1f}"
 
-                        if done >= self.tolerance :
+                        if done >= self.tolerance:
                             self.A_data.append(valneu)
                             self.anno_list.append(str(f))
                             ta[i][6] = 'pass'
-                        elif ta[i][6] != 'error':
+                        elif ta[i][6] != b'error':
                             count[1] += 1
                             output_log += " - skipped"
                             ta[i][6] = 'skip'
@@ -191,6 +191,19 @@ class DataMatrix:
         self.output_log = output_log
 
         np.savetxt((str(self.output_dir)+'/datamatrix.txt'), self.A_data, fmt='%d', delimiter=' ', )
+
+    def compute_score(self, datamatrix):
+        # 3.2.a) Miss Diversity;
+        # compute scores(avg attractiveness per probant( == valid annos per col))
+        V = np.asanyarray(datamatrix)
+        B = (V == 1).astype(int)
+        valid_per_col = np.sum(V < 2, axis=0)
+        sum_per_col_valid = np.sum(B, axis=0)
+        sc = 1.0 * sum_per_col_valid / valid_per_col
+        self.score_list = sc
+        self.hist1_canvas = valid_per_col
+        self.hist2_canvas = sc
+        return V
 
     def estimate_images(self):
         print(self.image_path)
@@ -216,28 +229,26 @@ class DataMatrix:
                     self.matr_list.append([match, 1])
         self.matr_list = sorted(self.matr_list, key=lambda l: l[1], reverse=True)
 
-        # 3.2.a) Miss Diversity;
-        # compute scores(avg attractiveness per probant( == valid annos per col))
-        V = np.asanyarray(self.A_data)
-        B = (V == 1).astype(int)
-        valid_per_col = np.sum(V < 2, axis=0)
-        sum_per_col_valid = np.sum(B, axis=0)
-        sc = 1.0 * sum_per_col_valid / valid_per_col
-        self.score_list = sc
+        V = self.compute_score(self.A_data)
+
         num_value_0_with_large_sc = []
         num_value_1_with_small_sc = []
+        num_value_0 = []
+        num_value_1 = []
+        delete_rows = []
         n = 0
         k = 0
         for row in V:
             num_value_0_with_large_sc.append(0)
             num_value_1_with_small_sc.append(0)
+            num_value_0.append(0)
+            num_value_1.append(0)
             for i in range(0, len(row)):
-                score = sc[i]
+                score = self.score_list[i]
                 if row[i] == 1 and score < 0.5:
                     num_value_1_with_small_sc[-1] += (0.5 - score)**4 * 10000
                 elif row[i] == 0 and score > 0.5:
                     num_value_0_with_large_sc[-1] += (score - 0.5)**4 * 10000
-
             while self.table_annodata[n+k][6] != b'pass':
                 k += 1
 
@@ -245,13 +256,23 @@ class DataMatrix:
             self.table_annodata[n+k][8] = f"{num_value_1_with_small_sc[n]:1.1f}"
             d0 = num_value_0_with_large_sc[n] * 100 / self.num_probs / float(self.table_annodata[n + k][5])
             self.table_annodata[n+k][9] = f"{d0:.2f}"
+            num_value_0[-1] += d0
             d1 = num_value_1_with_small_sc[n] * 100 / self.num_probs / float(self.table_annodata[n + k][5])
             self.table_annodata[n+k][10] = f"{d1:.2f}"
+            num_value_1[-1] += d1
+            if d1 > 6.0:
+                delete_rows.append(n)
+                self.table_annodata[n+k][6] = 't.div'
             n += 1
-        self.num_value_1_with_small_sc = num_value_1_with_small_sc
-        self.num_value_0_with_large_sc = num_value_0_with_large_sc
+        datamatrix_2 = V
+        for row in reversed(delete_rows):
+            datamatrix_2 = np.delete(datamatrix_2, row, 0)
+        np.savetxt((str(self.output_dir) + '/datamatrix2.txt'), datamatrix_2, fmt='%d', delimiter=' ', )
+        self.num_value_1_with_small_sc = num_value_1
+        self.num_value_0_with_large_sc = num_value_0
 
-
+        V = self.compute_score(datamatrix_2)
+        sc = self.score_list
 
         print(np.argmax(sc))
         sc_sort = np.argsort(sc)
@@ -268,9 +289,6 @@ class DataMatrix:
             img_save = self.output_dir + "/sc_images/{:.3f}".format(sc[sc_sort[-1-i]]) + "_" + fname.split('dummy')[0] + ".jpg"
             print(img_save)
             img.save(img_save)
-
-        self.hist1_canvas = valid_per_col
-        self.hist2_canvas = sc
 
         miss2_attr = self.image_path + os.sep + self.image_names_list[sc_sort[-2]].split(' ')[0]
         print(miss2_attr)

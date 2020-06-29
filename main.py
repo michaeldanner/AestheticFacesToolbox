@@ -21,6 +21,7 @@ class fr_MainWindow(QMainWindow):
         qApp.installEventFilter(self)
         # self.setupUi(self)
         path = 'example/'
+        # path = 'C:/tmp/aesthetics/'
 
         self.btn_img_dir.clicked.connect(self.buttonClicked)
         self.btn_img_list.clicked.connect(self.buttonClicked)
@@ -33,6 +34,7 @@ class fr_MainWindow(QMainWindow):
 
         self.lbl_out_dir.setText(str(path) + '')
         self.lbl_img_dir.setText(str(path) + '')
+        # self.lbl_img_dir.setText(str(path) + 'Pictures2020')
         self.lbl_anno_dir.setText(str(path) + 'out2020')
         self.lbl_img_list.setText(str(path) + 'anno.dat')
         self.lbl_ages_list.setText(str(path) + 'age.txt')
@@ -97,7 +99,7 @@ class fr_MainWindow(QMainWindow):
         self.tbl_anno_data.setRowCount(np.size(tbl, 0))
         self.tbl_anno_data.setColumnCount(np.size(tbl, 1))
         self.tbl_anno_data.setHorizontalHeaderLabels(['sc', 'matr', 'age', 'g', 'no.', 'a%', 'state', 'd0', 'd1',
-                                                    'd0%', 'd1%', 'am'])
+                                                    'd0%', 'd1%'])
         try:
             self.tbl_anno_data.clearContents()
         except Exception as err:
@@ -174,7 +176,7 @@ class fr_MainWindow(QMainWindow):
         if sender.text() == 'Image Textfile':
             # self.rot += 0.1
             fname = QFileDialog.getOpenFileName(self, 'Open file',
-                                                'c:\\', "Aesthetics data file (*.dat *.txt)")
+                                                filter="Aesthetics data file (*.dat *.txt)")
             self.lbl_img_list.setText(fname[0])
 
         elif sender.text() == 'Image directory':
@@ -240,11 +242,11 @@ if __name__ == "__main__":
     # ex = App()
     sys.exit(app.exec_())
 else:
+    path = 'example/'
     path = 'c:/tmp/aesthetics/'
     f = path + 'out2020'
-    # f = path + 'markuslenz'
-    load = path + 'annotations2020.dat'
-    image = path + 'Pictures2020'
-    out = path + 'Output'
-    age = path + 'alter.txt'
+    load = path + 'anno.dat'
+    image = path + ''
+    out = path + ''
+    age = path + 'age.txt'
     dm = DataMatrix(load, f, image, out, age, 9)
