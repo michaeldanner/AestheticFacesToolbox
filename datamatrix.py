@@ -27,8 +27,6 @@ class DataMatrix:
     table_annodata = None   # course, name, nr, age, sex, 5 percent,
                             # 6 status, diverse0, diverse1, divers0p, divers1p, 11 amount
     tolerance = 100
-    limit_div_0_with_large = 600
-    limit_div_1_with_small = 600  # Threshold for too_divers, if > limit_divers (on LFW)
     image_path = ''
     output_dir = ''
     anno_dat = ''
@@ -158,7 +156,9 @@ class DataMatrix:
                             print("warning: value(%d)~= 0 or 1 => set to value and pair to -1 and go on")
                         try:
                             valneu[rand[val[0]-1]] = val[1]
-                            valneu[rand[val[0]+self.num_pairs-1]] = not val[1]
+                            index = val[0]+self.num_pairs-1  # index of randomized.txt
+                            idx = rand[index]-1  # index of value.txt
+                            valneu[idx] = not val[1]
                         except IndexError as err:
                             print(str(err) + ' in folder ' + str(f))
                             output_log += str(err) + ' in folder ' + str(f) + '\n'
@@ -260,7 +260,7 @@ class DataMatrix:
             d1 = num_value_1_with_small_sc[n] * 100 / self.num_probs / float(self.table_annodata[n + k][5])
             self.table_annodata[n+k][10] = f"{d1:.2f}"
             num_value_1[-1] += d1
-            if d1 > 6.0:
+            if d1 > 4.0:
                 delete_rows.append(n)
                 self.table_annodata[n+k][6] = 't.div'
             n += 1
@@ -274,6 +274,14 @@ class DataMatrix:
         V = self.compute_score(datamatrix_2)
         sc = self.score_list
 
+        anno_list = ""
+        for row in self.table_annodata:
+            if row[6] == b'pass':
+                for item in row[:5]:
+                    anno_list += item.decode('utf8') + '_'
+                anno_list += '\n'
+
+        print(anno_list)
         print(np.argmax(sc))
         sc_sort = np.argsort(sc)
         miss_attr = self.image_path + os.sep + self.image_names_list[sc_sort[-1]].split(' ')[0]
@@ -287,7 +295,7 @@ class DataMatrix:
             if not os.path.exists(self.output_dir + "/sc_images/"):
                 os.mkdir(self.output_dir + "/sc_images/")
             img_save = self.output_dir + "/sc_images/{:.3f}".format(sc[sc_sort[-1-i]]) + "_" + fname.split('dummy')[0] + ".jpg"
-            print(img_save)
+            # print(img_save)
             img.save(img_save)
 
         miss2_attr = self.image_path + os.sep + self.image_names_list[sc_sort[-2]].split(' ')[0]

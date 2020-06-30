@@ -243,7 +243,7 @@ if __name__ == "__main__":
     sys.exit(app.exec_())
 else:
     path = 'example/'
-    path = 'c:/tmp/aesthetics/'
+    # path = 'c:/tmp/aesthetics/'
     f = path + 'out2020'
     load = path + 'anno.dat'
     image = path + ''
