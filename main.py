@@ -8,6 +8,7 @@ from PyQt5 import QtWidgets, uic
 from PyQt5.QtCore import QEvent
 
 from mplwidget import MplWidget
+from matplotlib import colors
 from gallerypopup import GalleryPopup
 
 
@@ -21,7 +22,7 @@ class fr_MainWindow(QMainWindow):
         qApp.installEventFilter(self)
         # self.setupUi(self)
         path = 'example/'
-        # path = 'C:/tmp/aesthetics/'
+        path = 'C:/tmp/aesthetics/'
 
         self.btn_img_dir.clicked.connect(self.buttonClicked)
         self.btn_img_list.clicked.connect(self.buttonClicked)
@@ -34,7 +35,7 @@ class fr_MainWindow(QMainWindow):
 
         self.lbl_out_dir.setText(str(path) + '')
         self.lbl_img_dir.setText(str(path) + '')
-        # self.lbl_img_dir.setText(str(path) + 'Pictures2020')
+        self.lbl_img_dir.setText(str(path) + 'Pictures2020')
         self.lbl_anno_dir.setText(str(path) + 'out2020')
         self.lbl_img_list.setText(str(path) + 'anno.dat')
         self.lbl_ages_list.setText(str(path) + 'age.txt')
@@ -53,7 +54,7 @@ class fr_MainWindow(QMainWindow):
         print(event)
         self.gpop = QDialog(self)
         # plot correlation of age and aesthetics
-        min, max, attr, avg, var = self.age_data
+        min, max, attr, avg, var, ethnic = self.age_data
         x = list(range(min, max))
         self.acw = MplWidget(self.centralwidget)
         self.acw.setObjectName(u"ac_widget2")
@@ -65,10 +66,11 @@ class fr_MainWindow(QMainWindow):
         ax = self.acw.canvas.figure.subplots()
         ax.clear()
         ax.set_title('Correlation of Aesthetics and Age')
+
         for i in range(0, max - min):
-            for score in attr[i]:
-                ax.plot(min + i, score, '.')
-                # print(str(min+i) + ' ' + str(score))
+            for score in range(len(attr[i])):
+                co = ethnic[i][score]
+                ax.plot(min + i, attr[i][score], '.', color=(co, .1, 1 - co))
         ax.plot(x, avg, '-', color='b')
 
         self.acw.canvas.draw()
@@ -153,18 +155,32 @@ class fr_MainWindow(QMainWindow):
         ax.imshow(dm.attr_canvas)
         self.attr_widget.canvas.draw()
 
+        # plot histogram ethnicity aesthetics
+        self.ac_widget.canvas.figure.clear()
+        ax = self.ac_widget.canvas.figure.subplots()
+        ax.clear()
+        x = dm.ethnic
+        y = dm.score_list
+
+        x, y = zip(*sorted((xVal, np.mean([yVal for a, yVal in zip(x, y) if xVal == a])) for xVal in set(x)))
+        ax.plot(x, y, '-', color='b')
+        self.ac_widget.canvas.draw()
+
         # plot correlation of age and aesthetics
         self.age_data = dm.get_age_data()
-        min, max, attr, avg, var = self.age_data
+        min, max, attr, avg, var, ethnic = self.age_data
+
         x = list(range(min, max))
         self.ac_widget2.canvas.figure.clear()
         ax = self.ac_widget2.canvas.figure.subplots()
         ax.clear()
         ax.set_title('Correlation of Aesthetics and Age')
         for i in range(0, max - min):
-            for score in attr[i]:
-                ax.plot(min + i, score, '.')
-                # print(str(min+i) + ' ' + str(score))
+            for score in range(len(attr[i])):
+                norm = colors.Normalize(0, 10)
+                co = ethnic[i][score]
+                ax.plot(min + i, attr[i][score], '.', color=(.99*co, .5-0.5*co, .8-.8*co))
+
         ax.plot(x, avg, '-', color='b')
 
         self.ac_widget2.canvas.draw()
@@ -242,11 +258,12 @@ if __name__ == "__main__":
     # ex = App()
     sys.exit(app.exec_())
 else:
-    path = 'example/'
-    # path = 'c:/tmp/aesthetics/'
+    # path = 'example/'
+    path = 'c:/tmp/aesthetics/'
     f = path + 'out2020'
     load = path + 'anno.dat'
     image = path + ''
+    image = path + 'Pictures2020/'
     out = path + ''
     age = path + 'age.txt'
     dm = DataMatrix(load, f, image, out, age, 9)

@@ -33,12 +33,14 @@ class DataMatrix:
     age_dat = ''
     anno_files = ''
     output_log = ''
+    ethnic = None
     hist1_canvas = None
     hist2_canvas = None
     attr_canvas = None
     attr_per_age = None
     avg_attr_per_age = None
     var_attr_per_age = None
+    ethnic_per_age = None
     min_age = 0
     max_age = 100
 
@@ -65,6 +67,7 @@ class DataMatrix:
         self.generate_datamatrix()
         self.estimate_images()
         self.normal_rank_graph()
+        self.get_age_data()
 
     def load_dataset(self):
         """
@@ -134,7 +137,7 @@ class DataMatrix:
                 # subpath is annotations folder, which contains students matricle number
                 rand, value = self.load_annotations(subpath)
                 _, f = os.path.split(subpath)
-                print(str(i) + " - " + str(f))
+                # print(str(i) + " - " + str(f))
                 try:
                     ta[i][0], ta[i][1], ta[i][2], ta[i][3], ta[i][4] = f.split('_', 4)
                     ta[i][3] = ta[i][3][:1]
@@ -268,12 +271,12 @@ class DataMatrix:
         for row in reversed(delete_rows):
             datamatrix_2 = np.delete(datamatrix_2, row, 0)
         np.savetxt((str(self.output_dir) + '/datamatrix2.txt'), datamatrix_2, fmt='%d', delimiter=' ', )
+        self.ethnic = np.loadtxt((str(self.output_dir) + '/ethnicity.txt'))
         self.num_value_1_with_small_sc = num_value_1
         self.num_value_0_with_large_sc = num_value_0
 
         V = self.compute_score(datamatrix_2)
         sc = self.score_list
-
         anno_list = ""
         for row in self.table_annodata:
             if row[6] == b'pass':
@@ -286,17 +289,17 @@ class DataMatrix:
         sc_sort = np.argsort(sc)
         miss_attr = self.image_path + os.sep + self.image_names_list[sc_sort[-1]].split(' ')[0]
         print(miss_attr)
-        self.image_list = []
-        for i in range(len(sc)):
-            self.image_list.append(self.image_names_list[sc_sort[-1-i]])
-            path, fname = (self.image_names_list[sc_sort[-1-i]].split(' ')[0]).split('/')
-            img_load = self.image_path + os.sep + self.image_names_list[sc_sort[-1-i]].split(' ')[0]
-            img = Image.open(img_load)
-            if not os.path.exists(self.output_dir + "/sc_images/"):
-                os.mkdir(self.output_dir + "/sc_images/")
-            img_save = self.output_dir + "/sc_images/{:.3f}".format(sc[sc_sort[-1-i]]) + "_" + fname.split('dummy')[0] + ".jpg"
-            # print(img_save)
-            img.save(img_save)
+        # self.image_list = []
+        # for i in range(len(sc[:0])):
+        #     self.image_list.append(self.image_names_list[sc_sort[-1-i]])
+        #     path, fname = (self.image_names_list[sc_sort[-1-i]].split(' ')[0]).split('/')
+        #     img_load = self.image_path + os.sep + self.image_names_list[sc_sort[-1-i]].split(' ')[0]
+        #     img = Image.open(img_load)
+        #     if not os.path.exists(self.output_dir + "/sc_images/"):
+        #         os.mkdir(self.output_dir + "/sc_images/")
+        #     img_save = self.output_dir + "/sc_images/{:.3f}".format(sc[sc_sort[-1-i]]) + "_" + fname.split('dummy')[0] + ".jpg"
+        #     # print(img_save)
+        #     img.save(img_save)
 
         miss2_attr = self.image_path + os.sep + self.image_names_list[sc_sort[-2]].split(' ')[0]
         print(miss2_attr)
@@ -327,13 +330,17 @@ class DataMatrix:
         print(max_age)
         x = min_age
         attr_per_age = []
+        ethnic_per_age = []
 
         while x < max_age:
             age = []
+            ethnic = []
             for i in range(0, self.num_probs):
                 if self.age_list[i] == x:
                     age.append(self.score_list[i])
+                    ethnic.append(self.ethnic[i])
             attr_per_age.append(age)
+            ethnic_per_age.append(ethnic)
             x += 1
 
         for element in attr_per_age:
@@ -349,6 +356,7 @@ class DataMatrix:
         self.var_attr_per_age = var_attr_per_age
         self.min_age = min_age
         self.max_age = max_age
+        self.ethnic_per_age = ethnic_per_age
 
     def get_dataset_properties(self):
         ret_str = 'Images:\t' + str(self.num_probs) + '\nPairs:\t' + str(self.num_pairs)
@@ -362,4 +370,10 @@ class DataMatrix:
         return ret_str
 
     def get_age_data(self):
-        return self.min_age, self.max_age, self.attr_per_age, self.avg_attr_per_age, self.var_attr_per_age
+        attr = self.attr_per_age
+        ethn = self.ethnic_per_age
+
+        for i in range(19):
+            for j in range(len(attr[i])):
+                pass
+        return self.min_age, self.max_age, attr, self.avg_attr_per_age, self.var_attr_per_age, ethn
