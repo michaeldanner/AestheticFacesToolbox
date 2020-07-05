@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>964</width>
+    <width>1245</width>
     <height>796</height>
    </rect>
   </property>
@@ -27,7 +27,7 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>942</width>
+           <width>1223</width>
            <height>733</height>
           </rect>
          </property>
@@ -101,6 +101,21 @@
               <string>Image_ID</string>
              </property>
             </column>
+            <column>
+             <property name="text">
+              <string>hair</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>hair2</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>HaircolorName</string>
+             </property>
+            </column>
            </widget>
           </item>
          </layout>
@@ -116,7 +131,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>964</width>
+     <width>1245</width>
      <height>21</height>
     </rect>
    </property>
