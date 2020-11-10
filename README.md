@@ -23,10 +23,10 @@ Additionaly to this README the paper cited below gives detailed information abou
 ![Aesthetic Faces Toolbox](img/aesthetic_toolbox.png)
 
 #### Dataset Administration
-![Dataset Explorer](img/Dataset_Explorer.png)
 * Browsing dataset
 * Generating new GAN images
 * adding missing labels with machine learning tools
+![Dataset Explorer](img/Dataset_Explorer.png)
 
 #### CNN Hair and Skin Complexion Estimator
 * Hair colour and hair style detection 
