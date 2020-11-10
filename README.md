@@ -16,14 +16,14 @@ faces whithin different ethnicities. With its modules
 the toolbox provides tools to analyse and visualize the essential information about given data and its annotation process.
  
 Secondly this Githup-Repository provides an extensive dataset of 9934 images from persons of different ethnicities 
-with individual social backgrounds. These images are labeled and already annotated in 8 years of surveys. Parts of
-the annotated images are generated with the StarGAN v.2 (developed of Choi et al [1]) to determine the influence of
-the biased view of annotators on aesthetics of persons from different ethnicities.
+with individual social backgrounds. These images are labeled and already annotated in 8 years of surveys with a total number 
+of 5,49 Million annotations. Parts of the annotated images are generated with the StarGAN v.2 (developed of Choi et al \[1\]) 
+to determine the influence of the biased view of annotators on aesthetics of persons from different ethnicities.
 
 Additionaly to this README the paper cited below gives detailed information about the toolbox and the dataset.  	
 
 ##Toolbox
-![Aesthetic Faces Toolbox](img/aestheticToolbox.png)
+![Aesthetic Faces Toolbox](img/aesthetic_toolbox.png)
 
 ###Dataset Administration
 ![Dataset Explorer](img/Dataset_Explorer.png)
@@ -75,5 +75,4 @@ isbn={978-989-758-402-2},
 [4]:	Huang, G.B., Mattar, M., Berg, T., Learned-Miller, E.: Labeled faces in the wild: A database forstudying face recognition in unconstrained environments (2008)
 [5]:	Xie, D., Liang, L., Jin, L., Xu, J., Li, M.: SCUT-FBP: A benchmark dataset for facial beauty perception. In: 2015 IEEE International Conference on Systems, Man, and Cybernetics, Kowloon Tong, Hong Kong, October 9-12, 2015. pp. 1821–1826. IEEE (2015), https://doi.org/10.1109/SMC.2015.319
 [6]:	Liang, L., Lin, L., Jin, L., Xie, D., Li, M.: Scut-fbp5500: a diverse benchmark dataset for multi-paradigm facial beauty prediction. In: 2018 24th International Conference on Pattern Recognition (ICPR). pp. 1598–1603. IEEE (2018)
-
 
