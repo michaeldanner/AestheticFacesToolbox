@@ -22,23 +22,23 @@ Additionaly to this README the paper cited below gives detailed information abou
 ## Toolbox
 ![Aesthetic Faces Toolbox](img/aesthetic_toolbox.png)
 
-### Dataset Administration
+#### Dataset Administration
 ![Dataset Explorer](img/Dataset_Explorer.png)
 * Browsing dataset
 * Generating new GAN images
 * adding missing labels with machine learning tools
 
-### CNN Hair and Skin Complexion Estimator
+#### CNN Hair and Skin Complexion Estimator
 * Hair colour and hair style detection 
 * Skin complexion analysis with texture extraction and evaluation
 * Adding labels in your dataset
 	
-### CNN Ethnicity Estimator
+#### CNN Ethnicity Estimator
 * modified deep network pretrained on 200M images and 8M identities
 * retrained for ethnicity estimation with nestrov momentum
 * 95% accuracy on validation set
 	
-### CNN Aesthetics Score Estimator
+#### CNN Aesthetics Score Estimator
 * CNN trained on annotated aesthetic scores (collected in 8 years of surveys)
 * bias reduction due to including detected correlations of ethnicity and skin complexion
 	
@@ -70,9 +70,14 @@ isbn={978-989-758-402-2},
 
 ## Sources
 [1]:	Choi, Y., Choi, M., Kim, M., Ha, J., Kim, S., Choo, J.: Stargan: Unified generative adversarial networks for multi-domain image-to-image translation. CoRR abs/1711.09020 (2017), (http://arxiv.org/abs/1711.09020/)
+
 [2]:	Hülsmann, R.: MCSO Online Inmate Data (2013), (https://www.mcso.us/PAID/Home/SearchResults/)
+
 [3]:	Hülsmann, R., Braun, S.: Olympic Photos, Galleries and Slideshows. https://www.olympic.org/photos (Retrieved 03/08/2013)
+
 [4]:	Huang, G.B., Mattar, M., Berg, T., Learned-Miller, E.: Labeled faces in the wild: A database forstudying face recognition in unconstrained environments (2008)
+
 [5]:	Xie, D., Liang, L., Jin, L., Xu, J., Li, M.: SCUT-FBP: A benchmark dataset for facial beauty perception. In: 2015 IEEE International Conference on Systems, Man, and Cybernetics, Kowloon Tong, Hong Kong, October 9-12, 2015. pp. 1821–1826. IEEE (2015), https://doi.org/10.1109/SMC.2015.319
+
 [6]:	Liang, L., Lin, L., Jin, L., Xie, D., Li, M.: Scut-fbp5500: a diverse benchmark dataset for multi-paradigm facial beauty prediction. In: 2018 24th International Conference on Pattern Recognition (ICPR). pp. 1598–1603. IEEE (2018)
 
