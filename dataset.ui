@@ -68,7 +68,7 @@
             </column>
             <column>
              <property name="text">
-              <string>Filename</string>
+              <string>Landmarks</string>
              </property>
             </column>
             <column>

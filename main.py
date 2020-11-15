@@ -21,8 +21,7 @@ class fr_MainWindow(QMainWindow):
         uic.loadUi('aesthetics.ui', self)
         qApp.installEventFilter(self)
         # self.setupUi(self)
-        path = 'example/'
-        path = 'C:/tmp/aesthetics/'
+        path = 'd:/tmp/aesthetics/'
 
         self.btn_img_dir.clicked.connect(self.buttonClicked)
         self.btn_img_list.clicked.connect(self.buttonClicked)
@@ -33,11 +32,10 @@ class fr_MainWindow(QMainWindow):
         self.attr_widget.canvas.mpl_connect('button_press_event', self._on_press)
         self.ac_widget2.canvas.mpl_connect('button_press_event', self._on_press_ac)
 
-        self.lbl_out_dir.setText(str(path) + '')
-        self.lbl_img_dir.setText(str(path) + '')
+        self.lbl_out_dir.setText(str(path) + 'output')
         self.lbl_img_dir.setText(str(path) + 'Pictures2020')
         self.lbl_anno_dir.setText(str(path) + 'out2020')
-        self.lbl_img_list.setText(str(path) + 'anno.dat')
+        self.lbl_img_list.setText(str(path) + 'images.txt')
         self.lbl_ages_list.setText(str(path) + 'age.txt')
         self.show()
 

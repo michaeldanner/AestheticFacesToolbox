@@ -137,7 +137,7 @@ class DataMatrix:
                 # subpath is annotations folder, which contains students matricle number
                 rand, value = self.load_annotations(subpath)
                 _, f = os.path.split(subpath)
-                # print(str(i) + " - " + str(f))
+                print(str(i) + " - " + str(f))
                 try:
                     ta[i][0], ta[i][1], ta[i][2], ta[i][3], ta[i][4] = f.split('_', 4)
                     ta[i][3] = ta[i][3][:1]
@@ -202,6 +202,7 @@ class DataMatrix:
         B = (V == 1).astype(int)
         valid_per_col = np.sum(V < 2, axis=0)
         sum_per_col_valid = np.sum(B, axis=0)
+        print("sum_per_col_valid: " +str(sum_per_col_valid) + " - valid_per_col: " + str(valid_per_col))
         sc = 1.0 * sum_per_col_valid / valid_per_col
         self.score_list = sc
         self.hist1_canvas = valid_per_col
@@ -289,17 +290,17 @@ class DataMatrix:
         sc_sort = np.argsort(sc)
         miss_attr = self.image_path + os.sep + self.image_names_list[sc_sort[-1]].split(' ')[0]
         print(miss_attr)
-        # self.image_list = []
-        # for i in range(len(sc[:0])):
-        #     self.image_list.append(self.image_names_list[sc_sort[-1-i]])
-        #     path, fname = (self.image_names_list[sc_sort[-1-i]].split(' ')[0]).split('/')
-        #     img_load = self.image_path + os.sep + self.image_names_list[sc_sort[-1-i]].split(' ')[0]
-        #     img = Image.open(img_load)
-        #     if not os.path.exists(self.output_dir + "/sc_images/"):
-        #         os.mkdir(self.output_dir + "/sc_images/")
-        #     img_save = self.output_dir + "/sc_images/{:.3f}".format(sc[sc_sort[-1-i]]) + "_" + fname.split('dummy')[0] + ".jpg"
-        #     # print(img_save)
-        #     img.save(img_save)
+        self.image_list = []
+        for i in range(len(sc)):
+            self.image_list.append(self.image_names_list[sc_sort[-1-i]])
+            path, fname = (self.image_names_list[sc_sort[-1-i]].split(' ')[0]).split('/')
+            img_load = self.image_path + os.sep + self.image_names_list[sc_sort[-1-i]].split(' ')[0]
+            img = Image.open(img_load)
+            if not os.path.exists(self.output_dir + "/sc_images/"):
+                os.mkdir(self.output_dir + "/sc_images/")
+            img_save = self.output_dir + "/sc_images/{:.3f}".format(sc[sc_sort[-1-i]]) + "_" + fname.split('dummy')[0] + ".jpg"
+            # print(img_save)
+            img.save(img_save)
 
         miss2_attr = self.image_path + os.sep + self.image_names_list[sc_sort[-2]].split(' ')[0]
         print(miss2_attr)

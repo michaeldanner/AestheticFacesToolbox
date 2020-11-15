@@ -241,8 +241,15 @@ class DsMainWindow(QMainWindow):
             self.tbl_dataset.setCellWidget(row, 1, label)
 
             # Image filename
-            item = self.image_list[row]
-            self.tbl_dataset.setItem(row, 2, QTableWidgetItem(item))
+            try:
+                fname = 'example/Pictures2020/' + self.image_list[row]
+                fname = fname.replace('.jpg', '_lmk.jpg')
+                pic = QPixmap(fname)
+                label = QLabel()
+                label.setPixmap(pic.scaled(100, 100))
+                self.tbl_dataset.setCellWidget(row, 2, label)
+            except:
+                print("no landmark image")
 
             # Age
             age = float(self.age[row])
