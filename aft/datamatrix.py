@@ -194,6 +194,7 @@ class DataMatrix:
         self.output_log = output_log
 
         np.savetxt((str(self.output_dir)+'/datamatrix.txt'), self.A_data, fmt='%d', delimiter=' ', )
+        print(output_log)
 
     def compute_score(self, datamatrix):
         # 3.2.a) Miss Diversity;
@@ -272,7 +273,7 @@ class DataMatrix:
         for row in reversed(delete_rows):
             datamatrix_2 = np.delete(datamatrix_2, row, 0)
         np.savetxt((str(self.output_dir) + '/datamatrix2.txt'), datamatrix_2, fmt='%d', delimiter=' ', )
-        self.ethnic = np.loadtxt((str(self.output_dir) + '/ethnicity.txt'))
+        self.ethnic = np.loadtxt((str(self.output_dir) + '/ethnicity.txt'))  # todo: make a config path value
         self.num_value_1_with_small_sc = num_value_1
         self.num_value_0_with_large_sc = num_value_0
 
@@ -293,7 +294,10 @@ class DataMatrix:
         self.image_list = []
         for i in range(len(sc)):
             self.image_list.append(self.image_names_list[sc_sort[-1-i]])
-            path, fname = (self.image_names_list[sc_sort[-1-i]].split(' ')[0]).split('/')
+            if "/" in self.image_names_list[sc_sort[-1-i]].split(' ')[0]:
+                path, fname = (self.image_names_list[sc_sort[-1-i]].split(' ')[0]).split('/')
+            else:
+                fname = (self.image_names_list[sc_sort[-1 - i]].split(' ')[0])
             img_load = self.image_path + os.sep + self.image_names_list[sc_sort[-1-i]].split(' ')[0]
             img = Image.open(img_load)
             if not os.path.exists(self.output_dir + "/sc_images/"):

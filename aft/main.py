@@ -2,15 +2,13 @@ import sys, os
 import numpy as np
 from datamatrix import DataMatrix
 from PyQt5.QtCore import *
-from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5 import QtWidgets, uic
-from PyQt5.QtCore import QEvent
 
 from mplwidget import MplWidget
 from matplotlib import colors
 from gallerypopup import GalleryPopup
-
+import config
 
 class fr_MainWindow(QMainWindow):
     image_list = []
@@ -21,7 +19,7 @@ class fr_MainWindow(QMainWindow):
         uic.loadUi('aesthetics.ui', self)
         qApp.installEventFilter(self)
         # self.setupUi(self)
-        path = 'd:/tmp/aesthetics/'
+        path = config.file['images']
 
         self.btn_img_dir.clicked.connect(self.buttonClicked)
         self.btn_img_list.clicked.connect(self.buttonClicked)
@@ -32,11 +30,12 @@ class fr_MainWindow(QMainWindow):
         self.attr_widget.canvas.mpl_connect('button_press_event', self._on_press)
         self.ac_widget2.canvas.mpl_connect('button_press_event', self._on_press_ac)
 
-        self.lbl_out_dir.setText(str(path) + 'output')
-        self.lbl_img_dir.setText(str(path) + 'Pictures2020')
-        self.lbl_anno_dir.setText(str(path) + 'out2020')
-        self.lbl_img_list.setText(str(path) + 'images.txt')
-        self.lbl_ages_list.setText(str(path) + 'age.txt')
+        self.lbl_out_dir.setText(config.file['output'])
+        self.lbl_img_dir.setText(config.file['image_folder'])
+        self.lbl_anno_dir.setText(config.file['annotations'])
+        self.lbl_img_list.setText(config.file['images'])
+        self.lbl_ages_list.setText(config.file['ages'])
+        self.lineEdit.setText(str(config.tolerance))
         self.show()
 
     @pyqtSlot(QWidget)
@@ -95,6 +94,8 @@ class fr_MainWindow(QMainWindow):
         self.plainTextEdit.setPlainText(dm.get_dataset_properties())
         # insert data in table:
         tbl = dm.table_annodata
+        print(type(tbl))
+        np.savetxt(config.file["output"] + "/evaluation.csv", tbl, '%s', delimiter=",")  # todo: make it nicer
 
         self.tbl_anno_data.setRowCount(np.size(tbl, 0))
         self.tbl_anno_data.setColumnCount(np.size(tbl, 1))
@@ -176,7 +177,7 @@ class fr_MainWindow(QMainWindow):
         for i in range(0, max - min):
             for score in range(len(attr[i])):
                 norm = colors.Normalize(0, 10)
-                co = ethnic[i][score]
+                co = ethnic[i][score]/5
                 ax.plot(min + i, attr[i][score], '.', color=(.99*co, .5-0.5*co, .8-.8*co))
 
         ax.plot(x, avg, '-', color='b')

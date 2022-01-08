@@ -1,15 +1,10 @@
 import sys, csv
 from PIL import Image
 import webcolors
-import cv2
-import matplotlib.pyplot as plt
-import numpy as np
-from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5 import QtWidgets, uic
-from PyQt5.QtCore import QEvent
-from datamatrix import DataMatrix
+from aft.datamatrix import DataMatrix
 
 
 def _reversedict(d: dict) -> dict:
