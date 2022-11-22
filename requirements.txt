@@ -3,7 +3,7 @@ cycler==0.10.0
 kiwisolver==1.2.0
 matplotlib==3.2.2
 numpy==1.19.0
-Pillow==7.1.2
+Pillow==9.3.0
 pyparsing==2.4.7
 PyQt5==5.15.6
 PyQt5-sip==12.9.0
