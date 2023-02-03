@@ -5,7 +5,7 @@ import re
 import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
-from matplotlib.backends.backend_qt5agg import FigureCanvasQT
+# from matplotlib.backends.backend_qt5agg import FigureCanvasQT
 
 
 class DataMatrix:
@@ -63,11 +63,7 @@ class DataMatrix:
         self.image_path = image_path
         self.output_dir = output_dir
         self.age_dat = ages_dat
-        self.load_dataset()
-        self.generate_datamatrix()
-        self.estimate_images()
-        self.normal_rank_graph()
-        self.get_age_data()
+
 
     def load_dataset(self):
         """
@@ -115,7 +111,12 @@ class DataMatrix:
                 is_values = True
                 with open(filename) as value:
                     for line in value:
-                        a, b = line.split(' ')
+                        if len(line.split(' ')) == 2:
+                            a, b = line.split(' ')
+                        else:
+                            print("Value error in file: " + filename)
+                            print("Expected 2 values got {}".format(len(line.split(' '))))
+                            return
                         values.append([int(a.strip()), int(b.strip())])
             elif 'randomized' in f:
                 print("Error in path " + str(p) + ": There is a randomized file, but not usable")
@@ -298,6 +299,7 @@ class DataMatrix:
                 path, fname = (self.image_names_list[sc_sort[-1-i]].split(' ')[0]).split('/')
             else:
                 fname = (self.image_names_list[sc_sort[-1 - i]].split(' ')[0])
+            print(fname)
             img_load = self.image_path + os.sep + self.image_names_list[sc_sort[-1-i]].split(' ')[0]
             img = Image.open(img_load)
             if not os.path.exists(self.output_dir + "/sc_images/"):

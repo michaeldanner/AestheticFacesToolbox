@@ -1,9 +1,9 @@
-path = 'D:/Data/Ethics/WS_21_22/'
+path = 'D:\\data\\anno_ws22\\'
 file = dict(
     images=path + 'images.txt',
-    ages=path + 'ages.txt',
+    ages=path + 'ages_fixed.txt',
     output=path + 'output/',
     image_folder=path + 'Pictures2021_GAN/',
-    annotations=path + 'out_2021/',
+    annotations=path + 'out2022ws/',
 )
 tolerance = 15
